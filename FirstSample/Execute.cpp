@@ -51,8 +51,8 @@ void rc17::Execute::run(HObject _depthImage)
 	else
 	{
 #ifdef USESERIALPORT
-		Protocol::sendDataBySerialPort(0, 0, -PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index), 
-			PillarVariables::pixelCoor.column), 0, 0, CommunicationVariables::serialPort);
+		//Protocol::sendDataBySerialPort(0, 0, -PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index), 
+			//PillarVariables::pixelCoor.column), 0, 0, CommunicationVariables::serialPort);
 #endif
 		count = 0;
 	}

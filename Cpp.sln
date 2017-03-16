@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirstSample", "FirstSample\FirstSample.vcxproj", "{B8A8CF1A-5406-46F5-8D3F-9CEF5EB2B01E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19358C61-1AD6-41D7-8BD2-76200B12FDA1}"
-	ProjectSection(SolutionItems) = preProject
-		..\README.windows = ..\README.windows
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

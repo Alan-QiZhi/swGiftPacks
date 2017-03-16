@@ -5,15 +5,15 @@ namespace rc17
 	class Execute
 	{
 	public:
-		bool init();
-		void run(HObject _depthImage);
+		static bool init();
+		static void run(HObject _depthImage);
 	private:
-		void initPos();
-		void initHWindow();
-		void initSerialPort();
-		void initSocket();
-		void setCameraParam();
-		void getPillarCoor();
-		void saucerTrack();
+		static void initPos();
+		static void initHWindow();
+		static void initSerialPort();
+		static void initSocket();
+		static void setCameraParam();
+		static void getPillarCoor();
+		static void saucerTrack();
 	};
 }

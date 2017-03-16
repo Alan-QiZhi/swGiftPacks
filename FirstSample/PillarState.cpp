@@ -13,8 +13,6 @@ rc17::Coor3D const rc17::PillarState::pillarWorldCoor[7]
 	rc17::Coor3D(7550, 10075, 1000),
 };
 
-
-
 rc17::Coor3D rc17::PillarState::middleFilter(Coor3D pillarCoor)
 {
 	static const int FILTERSIZE = 30;
@@ -182,7 +180,7 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 {
 	const int pixelThreshold = 3;//经调试发现阈值设为1可以 设为0则无法修过来
 	const int pixelThreshold2 = 128;
-	int pixelOffset = column - PillarVariables::pillarPixels[PillarIndex(pillarToFind)];
+	int pixelOffset = column - PillarVariables::pillarLocCol[PillarIndex(pillarToFind)];
 	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
 	{
 		double kP = 1;//pid 单纯的给角度很慢 所以又要修pid的参数了
@@ -198,4 +196,11 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 		return yawToFix;
 	}
 	return 0.0;
+}
+
+bool rc17::PillarState::hasBaloon()
+{
+	int thresBall = 5; // 超出这个阈值则认为有球。
+	//TODO
+	return true;	
 }

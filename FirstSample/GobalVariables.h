@@ -38,9 +38,13 @@ namespace rc17
 	class PillarVariables
 	{
 	public:
-		static Coor3D coor;
+		static Coor3D worldCoor;
+		static Coor2D pixelCoor;
 		static int index;
-		static const double pillarPixels[7];
+		//摄像头修yaw用
+		static const int pillarLocCol[7];
+		//摄像头判断有无球用。这是无球的row
+		static const int pillarLocRow[7];
 	};
 
 	class CommunicationVariables

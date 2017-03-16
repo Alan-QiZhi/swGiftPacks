@@ -189,7 +189,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					float* rtOffset = new float[3];
 					rtOffset[0] = rotatedOffset.x;
 					rtOffset[1] = rotatedOffset.y;
-					rtOffset[2] = PillarVariables::coor.z/10;
+					rtOffset[2] = PillarVariables::worldCoor.z/10;
 
 					//cin >> rtOffset[0];
 					//cin >> rtOffset[1];

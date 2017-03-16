@@ -43,8 +43,8 @@ void rc17::Execute::run(HObject _depthImage)
 	//设置摄像头位置参数
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
-	Coor2D pillarPixel = PillarState::getPillarPixel(CameraVariables::cameraParam, PillarIndex(PillarVariables::index));
-	cout << pillarPixel.row << "   " << pillarPixel.column << endl;
+	PillarVariables::pixelCoor = PillarState::getPillarPixel(CameraVariables::cameraParam, PillarIndex(PillarVariables::index));
+	cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
 	static int count = 20;
 	if (count < 10)
 		count++;
@@ -58,8 +58,8 @@ void rc17::Execute::run(HObject _depthImage)
 	/****************************************************************************************/
 
 	//获得柱子的像素坐标
-	if (pillarPixel.row>0 && pillarPixel.column > 0)
-		PillarVariables::coor = CameraVariables::getWorldCoor(pillarPixel.row, pillarPixel.column);
+	if (PillarVariables::pixelCoor.row>0 && PillarVariables::pixelCoor.column > 0)
+		PillarVariables::worldCoor = CameraVariables::getWorldCoor(PillarVariables::pixelCoor.row, PillarVariables::pixelCoor.column);
 
 	//追踪飞盘
 	saucerTrack();
@@ -140,7 +140,7 @@ void rc17::Execute::setCameraParam()
 
 void rc17::Execute::getPillarCoor()
 {
-	PillarVariables::coor = PillarState::getPillarCoor(CameraVariables::cameraParam, PillarIndex(PillarVariables::index));
+	PillarVariables::worldCoor = PillarState::getPillarCoor(CameraVariables::cameraParam, PillarIndex(PillarVariables::index));
 }
 
 void rc17::Execute::saucerTrack()

@@ -7,10 +7,9 @@
 #include "MySerial.h"
 using namespace std;
 
-#define CAMERAROTATE 0
 #define NEWMETHOD
 #define DEBUG
-//#define USESERIALPORT
+#define USESERIALPORT
 #define BLUETEAM
 //#define USESOCKET
 namespace rc17
@@ -28,6 +27,7 @@ namespace rc17
 		static CameraParam cameraParam;
 		static Coor3D cameraOffset;
 
+		static const double cameraRotate;
 		static double receiveX;
 		static double receiveY;
 		static double receiveAngle;
@@ -45,6 +45,8 @@ namespace rc17
 		static const int pillarLocCol[7];
 		//摄像头判断有无球用。这是无球的row
 		static const int pillarLocRow[7];
+		//摄像头confidence
+		static const int pillarConfidence[7];
 	};
 
 	class CommunicationVariables
@@ -52,6 +54,12 @@ namespace rc17
 	public:
 		static MySerial serialPort;
 		static SocketClient mySocketClient;
+	};
+
+	class ThreadFlag
+	{
+	public:
+		static bool tYawCorrectFlag;
 	};
 }
 

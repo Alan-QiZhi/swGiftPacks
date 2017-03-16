@@ -23,7 +23,7 @@ namespace rc17
 		static Coor3D getPillarCoor();
 		static Coor2D getPillarPixel();
 		static double offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column);
-		static bool hasBaloon();
+		static bool hasBall();
 	private:
 		static const Coor3D pillarWorldCoor[7];
 		static Coor3D middleFilter(Coor3D pillarCoor);

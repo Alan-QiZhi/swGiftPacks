@@ -198,7 +198,7 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 	return 0.0;
 }
 
-bool rc17::PillarState::hasBaloon()
+bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
 	if(PillarVariables::pillarLocRow[PillarIndex(PillarVariables::index)] - PillarVariables::pixelCoor.column < thresBall)

@@ -9,6 +9,7 @@ rc17::Coor3D rc17::CameraVariables::cameraOffset = rc17::Coor3D();
 double rc17::CameraVariables::receiveX = 0;
 double rc17::CameraVariables::receiveY = 0;
 double rc17::CameraVariables::receiveAngle = 0;
+double const rc17::CameraVariables::cameraRotate = 0;
 extern const void *depthData;
 
 
@@ -39,3 +40,5 @@ int const rc17::PillarVariables::pillarLocRow[7]
 
 rc17::MySerial rc17::CommunicationVariables::serialPort;
 rc17::SocketClient rc17::CommunicationVariables::mySocketClient;
+
+bool rc17::ThreadFlag::tYawCorrectFlag = false;

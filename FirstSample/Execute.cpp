@@ -51,12 +51,23 @@ void rc17::Execute::run(HObject _depthImage)
 	else
 	{
 #ifdef USESERIALPORT
-		Protocol::sendDataBySerialPort(0, 0, -PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index), pillarPixel.column), 0, 0, CommunicationVariables::serialPort);
+		Protocol::sendDataBySerialPort(0, 0, -PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index), 
+			PillarVariables::pixelCoor.column), 0, 0, CommunicationVariables::serialPort);
 #endif
 		count = 0;
 	}
 	/****************************************************************************************/
 
+	/******************************判断是打球还是正常发射*************************************/
+	if(PillarState::hasBall() == true)
+	{
+		//打球 还没有定协议
+	}
+	else
+	{
+		//正常发射
+	}
+	/****************************************************************************************/
 	//获得柱子的像素坐标
 	if (PillarVariables::pixelCoor.row>0 && PillarVariables::pixelCoor.column > 0)
 		PillarVariables::worldCoor = CameraVariables::getWorldCoor(PillarVariables::pixelCoor.row, PillarVariables::pixelCoor.column);
@@ -127,7 +138,7 @@ void rc17::Execute::setCameraParam()
 	CameraVariables::cameraParam.worldY = CameraVariables::receiveY +
 		CoorTransform::rotateVector(CameraVariables::cameraOffset, -CameraVariables::receiveAngle).y;
 	//receiveY + 摄像头偏移车坐标点 +
-	CameraVariables::cameraParam.yaw = CameraVariables::receiveAngle + CAMERAROTATE;
+	CameraVariables::cameraParam.yaw = CameraVariables::receiveAngle + CameraVariables::cameraRotate;
 #endif
 
 	//CameraVariables::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).x;

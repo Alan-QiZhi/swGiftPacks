@@ -178,7 +178,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					tmpOffset.x = offset[0];
 					tmpOffset.y = offset[1];
 					
-					rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CAMERAROTATE);
+					rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CameraVariables::cameraRotate);
 					cout << " xÆ«²î: " << setw(2) << rotatedOffset.x << " zÆ«²î: " << setw(2) << rotatedOffset.y << endl;
 					//Ðý×ªµ½ÔÆÌ¨·½ÏòÆ«²î
 

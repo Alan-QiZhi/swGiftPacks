@@ -73,9 +73,9 @@ rc17::Coor3D rc17::PillarState::middleFilter(Coor3D pillarCoor)
 	return resultCoor;
 }
 
-rc17::Coor3D rc17::PillarState::getPillarCoor(const CameraParam myCamParam, const PillarIndex pillarToFind)
+rc17::Coor3D rc17::PillarState::getPillarCoor()
 {
-	Coor2D pillarPixel = getPillarPixel(myCamParam, pillarToFind);
+	Coor2D pillarPixel = getPillarPixel();
 # ifdef USESOCKET
 	//char tmp[3] = { 0xaa, 0xbb, pillarPixelColumn - pillarColumn };
 	//send(sockClient, tmp, 3, 0);
@@ -88,9 +88,9 @@ rc17::Coor3D rc17::PillarState::getPillarCoor(const CameraParam myCamParam, cons
 	return pillarCoor;
 }
 
-rc17::Coor2D rc17::PillarState::getPillarPixel(const CameraParam myCamParam, const PillarIndex pillarToFind)
+rc17::Coor2D rc17::PillarState::getPillarPixel()
 {
-	Coor3D calculateCoor = CoorTransform::worldToCamera(myCamParam, pillarWorldCoor[pillarToFind]);
+	Coor3D calculateCoor = CoorTransform::worldToCamera(CameraVariables::cameraParam, pillarWorldCoor[PillarVariables::index]);
 
 	double pillarRow, pillarColumn;
 	bool notBeyond = CoorTransform::cameraToPixel(calculateCoor, pillarRow, pillarColumn);

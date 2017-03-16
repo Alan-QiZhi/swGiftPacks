@@ -43,7 +43,7 @@ void rc17::Execute::run(HObject _depthImage)
 	//设置摄像头位置参数
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
-	PillarVariables::pixelCoor = PillarState::getPillarPixel(CameraVariables::cameraParam, PillarIndex(PillarVariables::index));
+	PillarVariables::pixelCoor = PillarState::getPillarPixel();
 	cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
 	static int count = 20;
 	if (count < 10)
@@ -130,9 +130,9 @@ void rc17::Execute::setCameraParam()
 	CameraVariables::cameraParam.yaw = CameraVariables::receiveAngle + CAMERAROTATE;
 #endif
 
-	CameraVariables::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).x;
-	CameraVariables::cameraParam.worldY = 1000 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).y;
-	CameraVariables::cameraParam.yaw = 0 + CAMERAROTATE;
+	//CameraVariables::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).x;
+	//CameraVariables::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).y;
+	//CameraVariables::cameraParam.yaw = 0 + CAMERAROTATE;
 
 	CameraVariables::cameraParam.worldZ = 728;
 	CameraVariables::cameraParam.pitch = 16.3;
@@ -140,7 +140,7 @@ void rc17::Execute::setCameraParam()
 
 void rc17::Execute::getPillarCoor()
 {
-	PillarVariables::worldCoor = PillarState::getPillarCoor(CameraVariables::cameraParam, PillarIndex(PillarVariables::index));
+	PillarVariables::worldCoor = PillarState::getPillarCoor();
 }
 
 void rc17::Execute::saucerTrack()

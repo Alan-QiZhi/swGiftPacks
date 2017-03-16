@@ -20,8 +20,8 @@ namespace rc17
 	class PillarState
 	{
 	public:
-		static Coor3D getPillarCoor(const CameraParam myCamParam, const PillarIndex pillarToFind);
-		static Coor2D getPillarPixel(const CameraParam myCamParam, const PillarIndex pillarToFind);
+		static Coor3D getPillarCoor();
+		static Coor2D getPillarPixel();
 		static double offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column);
 		static bool hasBaloon();
 	private:

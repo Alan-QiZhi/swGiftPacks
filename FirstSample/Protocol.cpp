@@ -72,6 +72,33 @@ void rc17::Protocol::sendDataBySerialPort(double data1, double data2, double dat
 		throw exception("串口未打开！");
 
 }
+
+void rc17::Protocol::sendDataForBall()
+{
+	unsigned char bytesToSend[16];
+	bytesToSend[0] = 0xb6;
+	bytesToSend[1] = 0xab;
+	bytesToSend[2] = (0 & 0xff00) >> 8;
+	bytesToSend[3] = (0 & 0xff);
+	bytesToSend[4] = (0 & 0xff00) >> 8;
+	bytesToSend[5] = (0 & 0xff);
+	bytesToSend[6] = (0 & 0xff00) >> 8;
+	bytesToSend[7] = (0 & 0xff);
+	bytesToSend[8] = (0 & 0xff00) >> 8;
+	bytesToSend[9] = (0 & 0xff);
+	bytesToSend[10] = (0 & 0xff00) >> 8;
+	bytesToSend[11] = (0 & 0xff);
+	bytesToSend[12] = 1;
+	bytesToSend[13] = 0 & 0xff;
+	bytesToSend[14] = 0xbe;
+	bytesToSend[15] = 0xa9;
+
+	if (s.isOpened())
+		s.send(bytesToSend, 16);
+	else
+		throw exception("串口未打开！");
+}
+
 void rc17::Protocol::sendDataBySocket(long data1, long data2, long data3)
 {
 	unsigned char bytesToSend[12];

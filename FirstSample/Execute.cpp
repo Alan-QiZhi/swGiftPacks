@@ -50,9 +50,19 @@ void rc17::Execute::run(HObject _depthImage)
 		count++;
 	else
 	{
+		bool readyToShoot = false;
+		double yawToFix = 0;
+		yawToFix = PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index),
+			PillarVariables::pixelCoor.column, readyToShoot);
 #ifdef USESERIALPORT
-		//Protocol::sendDataBySerialPort(0, 0, -PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index), 
-			//PillarVariables::pixelCoor.column), 0, 0, CommunicationVariables::serialPort);
+		if(!readyToShoot)
+			Protocol::sendDataBySerialPort(0, 0, yawToFix, 0, 0, CommunicationVariables::serialPort);
+		else
+		{
+			if (PillarState::hasBall() == true)
+				Protocol::sendDataForBall();
+			// 
+		}
 #endif
 		count = 0;
 	}

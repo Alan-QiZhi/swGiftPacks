@@ -176,13 +176,15 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 	return Coor2D::empty();
 }
 
-double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column)
+double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column, bool& ready)
 {
 	const int pixelThreshold = 3;//经调试发现阈值设为1可以 设为0则无法修过来
 	const int pixelThreshold2 = 128;
-	int pixelOffset = column - PillarVariables::pillarLocCol[PillarIndex(pillarToFind)];
+	int pixelOffset = PillarVariables::pillarLocCol[PillarIndex(pillarToFind)] - column;
 	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
 	{
+		ready = false;
+
 		double kP = 1;
 		double kI = 0;
 		double kD = 0;
@@ -195,6 +197,8 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 		lastPixelOffset = pixelOffset;
 		return yawToFix;
 	}
+	if (abs(pixelOffset) > pixelThreshold)
+		ready = true;
 	return 0.0;
 }
 

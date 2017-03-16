@@ -22,7 +22,7 @@ namespace rc17
 	public:
 		static Coor3D getPillarCoor();
 		static Coor2D getPillarPixel();
-		static double offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column);
+		static double offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column, bool& ready);
 		static bool hasBall();
 	private:
 		static const Coor3D pillarWorldCoor[7];

@@ -24,16 +24,17 @@ rc17::Coor3D rc17::CameraVariables::getWorldCoor(double _row, double _column)
 
 rc17::Coor3D rc17::PillarVariables::worldCoor = Coor3D();
 rc17::Coor2D rc17::PillarVariables::pixelCoor = Coor2D();
-int rc17::PillarVariables::index = 2;
+int rc17::PillarVariables::index = 0;
 
 int const rc17::PillarVariables::pillarLocCol[7]
 {
 	0,0,0,53,0,335,0
 };
 
+
 int const rc17::PillarVariables::pillarLocRow[7]
 {
-	0,0,0,0,0,0,0
+	367,460,406,341,400,469,425
 };
 
 rc17::MySerial rc17::CommunicationVariables::serialPort;

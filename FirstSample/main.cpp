@@ -94,7 +94,7 @@ void CameraAction::imageConfig(void)
 	/*image quality*/
 
 	GenApi::CIntegerPtr ptrConfidenceThreshold = m_Camera.GetParameter("ConfidenceThreshold");
-	ptrConfidenceThreshold->SetValue(1600);
+	ptrConfidenceThreshold->SetValue(1008);
 	GenApi::CIntegerPtr ptrFilterStrength = m_Camera.GetParameter("FilterStrength");
 	ptrFilterStrength->SetValue(50);
 	GenApi::CIntegerPtr ptrOutlierTolerance = m_Camera.GetParameter("OutlierTolerance");

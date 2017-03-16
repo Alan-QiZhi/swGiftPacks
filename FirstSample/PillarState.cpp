@@ -183,9 +183,9 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 	int pixelOffset = column - PillarVariables::pillarLocCol[PillarIndex(pillarToFind)];
 	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
 	{
-		double kP = 1;//pid 单纯的给角度很慢 所以又要修pid的参数了
+		double kP = 1;
 		double kI = 0;
-		double kD = 0;//jvjvjiayou  522 12.71 117 -20.05
+		double kD = 0;
 
 		static int pixelOffsetSum = 0;
 		static int lastPixelOffset = pixelOffset;
@@ -200,7 +200,8 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 
 bool rc17::PillarState::hasBaloon()
 {
-	int thresBall = 5; // 超出这个阈值则认为有球。
-	//TODO
-	return true;	
+	int thresBall = 15; // 超出这个阈值则认为有球。
+	if(PillarVariables::pillarLocRow[PillarIndex(PillarVariables::index)] - PillarVariables::pixelCoor.column < thresBall)
+		return true;	
+	return false;
 }

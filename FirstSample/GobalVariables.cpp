@@ -31,12 +31,22 @@ int rc17::PillarVariables::index = 0;
 
 int const rc17::PillarVariables::pillarLocCol[7]
 {
-	-1,271,275,285,241,297,308
+	-128,271,275,285,235,297,274
+};
+
+int const rc17::PillarVariables::pillarBallLocCol[7]
+{
+	-128,243,264,260,265,285,274
 };
 
 int const rc17::PillarVariables::pillarLocRow[7]
 {
-	367,460,406,341,400,469,425
+	367,463,406,341,405,469,425
+};
+
+double rc17::PillarVariables::correctedYaw[7]
+{
+	0, 0, 0, 0, 0, 0, 0
 };
 
 rc17::MySerial rc17::CommunicationVariables::serialPort;

@@ -1,4 +1,3 @@
-
 #include "GobalVariables.h"
 #include "HalconCpp.h"
 #include "HDevThread.h"

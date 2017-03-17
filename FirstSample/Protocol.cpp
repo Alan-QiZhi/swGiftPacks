@@ -93,8 +93,8 @@ void rc17::Protocol::sendDataForBall()
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;
 
-	if (s.isOpened())
-		s.send(bytesToSend, 16);
+	if (CommunicationVariables::serialPort.isOpened())
+		CommunicationVariables::serialPort.send(bytesToSend, 16);
 	else
 		throw exception("´®¿ÚÎ´´ò¿ª£¡");
 }

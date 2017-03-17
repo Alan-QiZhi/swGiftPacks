@@ -137,12 +137,11 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 		HTuple row, column;
 		GetRegionPoints(ho_SelectedRegions, &row, &column);	
 		HObject plRegion;
-		findRegion(CameraVariables::depthImage, &plRegion, row[0], column[0], 700);
+		findRegion(CameraVariables::depthImage, &plRegion, row[0], column[0], 1000);
 
 #ifdef DEBUG
 		SetColor(HalconVariables::hv_WindowHandle, "green");
-		if (HDevWindowStack::IsOpen())
-			DispObj(plRegion, HDevWindowStack::GetActive());
+		
 #endif
 
 		HTuple hv_Value;
@@ -155,7 +154,9 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 		HObject ho_ImageReduced;
 		ReduceDomain(CameraVariables::depthImage, ho_Rectangle, &ho_ImageReduced);
 		HObject ho_PillarPart;
-		Threshold(ho_ImageReduced, &ho_PillarPart, (HTuple)(calculateCoor.z - 700), (HTuple)(calculateCoor.z + 700));
+		Threshold(ho_ImageReduced, &ho_PillarPart, (HTuple)(calculateCoor.z - 800), (HTuple)(calculateCoor.z + 800));
+		if (HDevWindowStack::IsOpen())
+			DispObj(ho_PillarPart, HDevWindowStack::GetActive());
 		HTuple hv_PillarCol;
 		RegionFeatures(ho_PillarPart, "column", &hv_PillarCol);
 
@@ -178,7 +179,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 
 double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column, bool& ready)
 {
-	const int pixelThreshold = 3;//经调试发现阈值设为1可以 设为0则无法修过来
+	const int pixelThreshold = 4;//经调试发现阈值设为1可以 设为0则无法修过来
 	const int pixelThreshold2 = 128;
 	int pixelOffset = PillarVariables::pillarLocCol[PillarIndex(pillarToFind)] - column;
 	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
@@ -201,11 +202,33 @@ double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, c
 		ready = true;
 	return 0.0;
 }
+double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column)
+{
+	const int pixelThreshold = 4;//经调试发现阈值设为1可以 设为0则无法修过来
+	const int pixelThreshold2 = 128;
+	int pixelOffset = PillarVariables::pillarBallLocCol[PillarIndex(pillarToFind)] - column;
+	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
+	{
+
+		double kP = 1;
+		double kI = 0;
+		double kD = 0;
+
+		static int pixelOffsetSum = 0;
+		static int lastPixelOffset = pixelOffset;
+		pixelOffsetSum += pixelOffset;
+		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixelOffset - pixelOffset);
+
+		lastPixelOffset = pixelOffset;
+		return yawToFix;
+	}
+	return 0.0;
+}
 
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	if(PillarVariables::pillarLocRow[PillarIndex(PillarVariables::index)] - PillarVariables::pixelCoor.column < thresBall)
+	if(PillarVariables::pillarLocRow[PillarIndex(PillarVariables::index)] - PillarVariables::pixelCoor.row > thresBall)
 		return true;	
 	return false;
 }

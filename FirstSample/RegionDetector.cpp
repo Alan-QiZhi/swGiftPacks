@@ -196,6 +196,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					//cout << " ÊäÈëxÆ«²î: " << rtOffset[0] << " ÊäÈëzÆ«²î: " << rtOffset[1] << endl;
 
 					rc17::Correction::calculate2(PillarVariables::index, Correct_Par, rtOffset);
+					PillarVariables::correctedYaw[PillarVariables::index] += Correct_Par[3];
 					cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
 						Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
 # ifdef USESERIALPORT

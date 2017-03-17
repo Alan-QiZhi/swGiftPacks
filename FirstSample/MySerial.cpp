@@ -310,7 +310,7 @@ int rc17::MySerial::send(unsigned char *send_buf, unsigned long data_len) const
 * 形参 ：								无
 * 返回值 ：							    无
 ****************************************************/
-#define BUFFERSIZE 40
+#define BUFFERSIZE 39
 void rc17::MySerial::openListenThread()
 {
 	thread listenThread(&MySerial::receive, this, BUFFERSIZE);
@@ -380,7 +380,7 @@ void rc17::MySerial::receive(const int data_len)
 					if (receData[8] == parity)
 					{
 						CameraVariables::receiveX = -(receData[2] * 256 + receData[3] - 20000);
-						CameraVariables::receiveY = receData[4] * 256 + receData[5] - 20000;
+						CameraVariables::receiveY = receData[4] * 256 + receData[5] - 20000 + 1000;
 						CameraVariables::receiveAngle = (receData[6] * 256 + receData[7] - 10000) / 100.0;
 						if (receData[9] > 7) receData[9] = receData[9] - 7;
 						rc17::PillarVariables::index = ((int)receData[9] - 1)>= 0? ((int)receData[9] - 1):0;

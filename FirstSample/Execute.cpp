@@ -44,7 +44,7 @@ void rc17::Execute::run(HObject _depthImage)
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
 	PillarVariables::pixelCoor = PillarState::getPillarPixel();
-	//cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
+	cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
 
 	//获得柱子的世界坐标
 	if (PillarVariables::pixelCoor.row>0 && PillarVariables::pixelCoor.column > 0)
@@ -55,6 +55,7 @@ void rc17::Execute::run(HObject _depthImage)
 	{
 		saucerTrack();
 	}
+	//ThreadFlag::t_Flag = true;
 }
 
 void rc17::Execute::initPos()

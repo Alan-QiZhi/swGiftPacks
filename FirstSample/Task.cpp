@@ -26,13 +26,16 @@ void rc17::Correct()
 				if (readyToShoot == true)
 				{
 					Protocol::sendCmd(Protocol::HitPillar);
-					ThreadFlag::t_Flag = false;//自此进入正常发射阶段
+					//ThreadFlag::t_Flag = false;//自此进入正常发射阶段
 					//正常发射
 				}
 			}
+			Protocol::sendCmd(Protocol::HitPillar);
 		}
 		//500ms 执行一次
+		
 		this_thread::sleep_for(chrono::milliseconds(500));
+
 	}
 }
 

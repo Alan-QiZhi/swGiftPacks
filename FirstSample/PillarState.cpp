@@ -180,9 +180,9 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 
 bool rc17::PillarState::lockPillar(int type)
 {
-	const int thresL = 4;
+	const int thresL = 3;
 	const int thresH = 128;
-	int pixelOffset;
+	int pixelOffset = 0;
 	switch(type)
 	{
 	case WithBall:
@@ -192,17 +192,17 @@ bool rc17::PillarState::lockPillar(int type)
 	case NoBall:
 		pixelOffset = PillarVariables::pillarLocCol[PillarIndex(PillarVariables::index)]
 			- PillarVariables::pixelCoor.column;
+		break;
 	default:
 		return false;
 	}
 
-	if (abs(pixelOffset) < thresL)
-		return true;
+	
 
 	if (abs(pixelOffset) > thresL && abs(pixelOffset) < thresH)
 	{
 		double kP = 1;
-		double kI = 0;
+		double kI = 0.0;
 		double kD = 0;
 
 		static int pixelOffsetSum = 0;
@@ -215,7 +215,8 @@ bool rc17::PillarState::lockPillar(int type)
 		Protocol::sendDataBySerialPort(0, 0, yawToFix, 0, 0, CommunicationVariables::serialPort);
 #endif
 	}
-
+	if (abs(pixelOffset) < thresL)
+		return true;
 	return false;
 }
 

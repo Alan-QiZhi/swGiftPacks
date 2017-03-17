@@ -45,54 +45,16 @@ void rc17::Execute::run(HObject _depthImage)
 	/****************************************摄像头修正***************************************/
 	PillarVariables::pixelCoor = PillarState::getPillarPixel();
 	//cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
-	static int count = 20;
-	if (count < 40)
-		count++;
-	else
-	{
-	/****************************************************************************************/
 
-	/******************************判断是打球还是正常发射*************************************/
-		if(PillarState::hasBall() == true)
-		{
-
-			cout << "ball" << endl;
-			double yawToFix = 0;
-			yawToFix = PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index),
-				PillarVariables::pixelCoor.column);
-			cout << yawToFix << endl;
-			//Protocol::sendDataBySerialPort(0, 0, yawToFix/* + PillarVariables::correctedYaw[PillarVariables::index]*/, 0, 0, CommunicationVariables::serialPort);
-			//打球 还没有定协议
-		}
-		else
-		{
-			bool readyToShoot = false;
-			double yawToFix = 0;
-			yawToFix = PillarState::offsetOfUnderpansYaw(PillarIndex(PillarVariables::index),
-				PillarVariables::pixelCoor.column, readyToShoot);
-#ifdef USESERIALPORT
-			if (!readyToShoot);
-				//Protocol::sendDataBySerialPort(0, 0, yawToFix + PillarVariables::correctedYaw[PillarVariables::index], 0, 0, CommunicationVariables::serialPort);
-			else
-			{
-				//if (PillarState::hasBall() == true)
-				//	Protocol::sendDataForBall();
-				// 
-			}
-#endif
-			count = 0;
-
-
-			//正常发射
-		}	
-	}
-	/****************************************************************************************/
-	//获得柱子的像素坐标
+	//获得柱子的世界坐标
 	if (PillarVariables::pixelCoor.row>0 && PillarVariables::pixelCoor.column > 0)
 		PillarVariables::worldCoor = CameraVariables::getWorldCoor(PillarVariables::pixelCoor.row, PillarVariables::pixelCoor.column);
 
-	//追踪飞盘
-	saucerTrack();
+	//追踪飞盘(没有球的时候)
+	if (ThreadFlag::t_Flag == false)
+	{
+		saucerTrack();
+	}
 }
 
 void rc17::Execute::initPos()

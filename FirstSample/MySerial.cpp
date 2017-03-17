@@ -368,10 +368,10 @@ void rc17::MySerial::receive(const int data_len)
 		{
 			for (int i = 0; i < BUFFERSIZE; i++)
 			{
-				if (receiveBuffer[i] == 0xB6 && receiveBuffer[i + 1] == 0xAB && receiveBuffer[i + 10] == 0xBE && receiveBuffer[i + 11] == 0xA9)
+				if (receiveBuffer[i] == 0xB6 && receiveBuffer[i + 1] == 0xAB && receiveBuffer[i + 11] == 0xBE && receiveBuffer[i + 12] == 0xA9)
 				{
-					unsigned char receData[12];
-					for (int j = 0; j < 12; j++)
+					unsigned char receData[13];
+					for (int j = 0; j < 13; j++)
 					{
 						receData[j] = receiveBuffer[(i++) % BUFFERSIZE];
 					}
@@ -379,11 +379,15 @@ void rc17::MySerial::receive(const int data_len)
 					unsigned char parity = ((receData[2] * 256 + receData[3] + receData[4] * 256 + receData[5] + receData[6] * 256 + receData[7]) & 0xff);
 					if (receData[8] == parity)
 					{
-						rc17::CameraVariables::receiveX = -(receData[2] * 256 + receData[3] - 20000);
-						rc17::CameraVariables::receiveY = receData[4] * 256 + receData[5] - 20000;
-						rc17::CameraVariables::receiveAngle = (receData[6] * 256 + receData[7] - 10000) / 100.0;
+						CameraVariables::receiveX = -(receData[2] * 256 + receData[3] - 20000);
+						CameraVariables::receiveY = receData[4] * 256 + receData[5] - 20000;
+						CameraVariables::receiveAngle = (receData[6] * 256 + receData[7] - 10000) / 100.0;
 						if (receData[9] > 7) receData[9] = receData[9] - 7;
 						rc17::PillarVariables::index = ((int)receData[9] - 1)>= 0? ((int)receData[9] - 1):0;
+						if (static_cast<int>(receData[10]) == 1)
+							ThreadFlag::t_Flag = true;
+						else if (static_cast<int>(receData[10]) == 0)
+							ThreadFlag::t_Flag = false;
 						//TODO
 						//为了配合学姐测试。
 						//if (receData[9] == 1)

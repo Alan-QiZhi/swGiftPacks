@@ -43,8 +43,8 @@ namespace rc17
 		static int index;
 		//摄像头修yaw用
 		static const int pillarLocCol[7];
-		//摄像头修yaw用
-		static const int pillarBallLocCol[7];
+		//摄像头修yaw用(ball)
+		static const int pillarBallCol[7];
 		//摄像头判断有无球用。这是无球的row
 		static const int pillarLocRow[7];
 		//摄像头confidence
@@ -63,7 +63,8 @@ namespace rc17
 	class ThreadFlag
 	{
 	public:
-		static bool tYawCorrectFlag;
+		static bool t_Flag;
+		static bool run;
 	};
 }
 

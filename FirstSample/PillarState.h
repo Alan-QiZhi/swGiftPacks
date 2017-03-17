@@ -20,10 +20,14 @@ namespace rc17
 	class PillarState
 	{
 	public:
+		enum
+		{
+			WithBall = 0,
+			NoBall
+		};
 		static Coor3D getPillarCoor();
 		static Coor2D getPillarPixel();
-		static double offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column, bool& ready);
-		static double offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column);
+		static bool lockPillar(int type);
 		static bool hasBall();
 	private:
 		static const Coor3D pillarWorldCoor[7];

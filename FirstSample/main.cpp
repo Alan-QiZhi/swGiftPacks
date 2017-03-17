@@ -6,6 +6,7 @@
 #include <thread>
 #include <ConsumerImplHelper/ToFCamera.h>
 #include "Execute.h"
+#include "Task.h"
 // 宏定义
 //
 //摄像头宏定义
@@ -165,7 +166,6 @@ int CameraAction::run()
     return EXIT_SUCCESS;
 }
 
-bool hv_run;
 bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 {
 	if(startFromExtern)
@@ -228,7 +228,7 @@ bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 		HTuple  hv_Grayval, hv_Exception;
 
 		/*按鼠标中键退出程序*/
-		hv_run = 1;
+		rc17::ThreadFlag::run = true;
 		try
 		{
 			GetMposition(rc17::HalconVariables::hv_WindowHandle, &hv_Row, &hv_Column, &hv_Button);
@@ -237,7 +237,7 @@ bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 
 			if (0 != (hv_Button == 2))
 			{
-				hv_run = 0;
+				rc17::ThreadFlag::run = false;
 			}
 			if (0 != (hv_Button == 1))
 			{
@@ -252,78 +252,10 @@ bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 
 	}
 		
-	return hv_run; 
+	return rc17::ThreadFlag::run;
 }
 
-// 扫描键盘输入的函数 （新加的线程）
-void scanfKey()
-{
-	while (hv_run == 0);
-	while (hv_run)
-	{
-		int key = getch();
-		if (key == 'w')
-		{
-			try
-			{
-				std::ofstream datafile;
-				datafile.open("C:\\Users\\robocon2017\\Desktop\\datafile.txt", std::ios::app);
-				datafile << "飞盘相比得到的偏差偏后" << endl;
-				cout << "检测到按键w 已向文件写入 飞盘相比得到的偏差偏后！" << endl;
-				datafile.close();
-			}
-			catch (...)
-			{
-				cout << "文件写入失败， 也许文件被占用.";
-			}
-		}
-		if (key == 'a')
-		{
-			try
-			{
-				std::ofstream datafile;
-				datafile.open("C:\\Users\\robocon2017\\Desktop\\datafile.txt", std::ios::app);
-				datafile << "飞盘相比得到的偏差偏左" << endl;
-				cout << "检测到按键a 已向文件写入 飞盘相比得到的偏差偏左！" << endl;
-				datafile.close();
-			}
-			catch (...)
-			{
-				cout << "文件写入失败， 也许文件被占用.";
-			}
-		}
-		if (key == 's')
-		{
-			try
-			{
-				std::ofstream datafile;
-				datafile.open("C:\\Users\\robocon2017\\Desktop\\datafile.txt", std::ios::app);
-				datafile << "飞盘相比得到的偏差偏前" << endl;
-				cout << "检测到按键s 已向文件写入 飞盘相比得到的偏差偏前！" << endl;
-				datafile.close();
-			}
-			catch (...)
-			{
-				cout << "文件写入失败， 也许文件被占用.";
-			}
-		}
-		if (key == 'd')
-		{
-			try
-			{
-				std::ofstream datafile;
-				datafile.open("C:\\Users\\robocon2017\\Desktop\\datafile.txt", std::ios::app);
-				datafile << "飞盘相比得到的偏差偏右" << endl;
-				cout << "检测到按键d 已向文件写入 飞盘相比得到的偏差偏右！" << endl;
-				datafile.close();
-			}
-			catch (...)
-			{
-				cout << "文件写入失败， 也许文件被占用.";
-			}
-		}
-	}
-}
+
 
 int main(int argc, char* argv[])
 {
@@ -335,7 +267,7 @@ int main(int argc, char* argv[])
 		hPipe = CreateFile(pStrPipeName, GENERIC_READ | GENERIC_WRITE, 0,
 			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	}
-	//std::thread t_write(scanfKey);
+	std::thread t_Correct(rc17::Correct);
     int exitCode = EXIT_SUCCESS;
 	myExe.init();
     try
@@ -355,7 +287,7 @@ int main(int argc, char* argv[])
     if ( CToFCamera::IsProducerInitialized() )
         CToFCamera::TerminateProducer();  // Won't throw any exceptions
 	{
-		//t_write.join();//等待该线程结束
+		t_Correct.join();//等待该线程结束
 		return exitCode;
 	}
 }

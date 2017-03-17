@@ -1,6 +1,7 @@
 #include "GobalVariables.h"
 #include "PillarState.h"
 #include "MiscellaneousFunctions.h"
+#include "Protocol.h"
 
 rc17::Coor3D const rc17::PillarState::pillarWorldCoor[7]
 {
@@ -177,52 +178,45 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 	return Coor2D::empty();
 }
 
-double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column, bool& ready)
+bool rc17::PillarState::lockPillar(int type)
 {
-	const int pixelThreshold = 4;//经调试发现阈值设为1可以 设为0则无法修过来
-	const int pixelThreshold2 = 128;
-	int pixelOffset = PillarVariables::pillarLocCol[PillarIndex(pillarToFind)] - column;
-	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
+	const int thresL = 4;
+	const int thresH = 128;
+	int pixelOffset;
+	switch(type)
 	{
-		ready = false;
+	case WithBall:
+		pixelOffset = PillarVariables::pillarBallCol[PillarIndex(PillarVariables::index)]
+			- PillarVariables::pixelCoor.column;
+		break;
+	case NoBall:
+		pixelOffset = PillarVariables::pillarLocCol[PillarIndex(PillarVariables::index)]
+			- PillarVariables::pixelCoor.column;
+	default:
+		return false;
+	}
 
+	if (abs(pixelOffset) < thresL)
+		return true;
+
+	if (abs(pixelOffset) > thresL && abs(pixelOffset) < thresH)
+	{
 		double kP = 1;
 		double kI = 0;
 		double kD = 0;
 
 		static int pixelOffsetSum = 0;
-		static int lastPixelOffset = pixelOffset;
+		static int lastPixel = PillarVariables::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
-		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixelOffset - pixelOffset);
+		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVariables::pixelCoor.column);
 
-		lastPixelOffset = pixelOffset;
-		return yawToFix;
+		lastPixel = PillarVariables::pixelCoor.column;
+#ifdef USESERIALPORT		
+		Protocol::sendDataBySerialPort(0, 0, yawToFix, 0, 0, CommunicationVariables::serialPort);
+#endif
 	}
-	if (abs(pixelOffset) > pixelThreshold)
-		ready = true;
-	return 0.0;
-}
-double rc17::PillarState::offsetOfUnderpansYaw(const PillarIndex pillarToFind, const int column)
-{
-	const int pixelThreshold = 4;//经调试发现阈值设为1可以 设为0则无法修过来
-	const int pixelThreshold2 = 128;
-	int pixelOffset = PillarVariables::pillarBallLocCol[PillarIndex(pillarToFind)] - column;
-	if (abs(pixelOffset) > pixelThreshold && abs(pixelOffset) < pixelThreshold2)
-	{
 
-		double kP = 1;
-		double kI = 0;
-		double kD = 0;
-
-		static int pixelOffsetSum = 0;
-		static int lastPixelOffset = pixelOffset;
-		pixelOffsetSum += pixelOffset;
-		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixelOffset - pixelOffset);
-
-		lastPixelOffset = pixelOffset;
-		return yawToFix;
-	}
-	return 0.0;
+	return false;
 }
 
 bool rc17::PillarState::hasBall()

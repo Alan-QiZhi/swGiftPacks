@@ -16,7 +16,7 @@ void rc17::Correct()
 				cout << "ball" << endl;
 				readyToShoot = PillarState::lockPillar(PillarState::WithBall);
 				if (readyToShoot == true)
-					Protocol::sendCmd(Protocol::HitBall);
+					Protocol::sendCmd(Protocol::switchToBallPara);
 			}
 			else
 			{
@@ -25,12 +25,12 @@ void rc17::Correct()
 
 				if (readyToShoot == true)
 				{
-					Protocol::sendCmd(Protocol::HitPillar);
+					Protocol::sendCmd(Protocol::shoot);
 					//ThreadFlag::t_Flag = false;//自此进入正常发射阶段
 					//正常发射
 				}
 			}
-			Protocol::sendCmd(Protocol::HitPillar);
+			//Protocol::sendCmd(Protocol::shoot);
 		}
 		//500ms 执行一次
 		

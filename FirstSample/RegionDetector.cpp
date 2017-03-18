@@ -203,7 +203,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					try
 					{
 						//if(Correct_Par[3])
-							//rc17::Protocol::sendDataBySerialPort((double)Correct_Par[1], (double)Correct_Par[2], (double)Correct_Par[3], -(double)Correct_Par[4], -(double)Correct_Par[5], CommunicationVariables::serialPort);
+							//rc17::Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, (double)Correct_Par[1], (double)Correct_Par[2], (double)Correct_Par[3], -(double)Correct_Par[4], -(double)Correct_Par[5]);
 					}
 					catch(...)
 					{

@@ -183,16 +183,23 @@ bool rc17::PillarState::lockPillar(int type)
 	const int thresL = 3;
 	const int thresH = 128;
 	int pixelOffset = 0;
+	int cmd = 0;
 	switch(type)
 	{
 	case WithBall:
+	{
 		pixelOffset = PillarVariables::pillarBallCol[PillarIndex(PillarVariables::index)]
 			- PillarVariables::pixelCoor.column;
+		cmd = Protocol::switchToBallPara;
 		break;
+	}
 	case NoBall:
+	{
 		pixelOffset = PillarVariables::pillarLocCol[PillarIndex(PillarVariables::index)]
 			- PillarVariables::pixelCoor.column;
+		cmd = Protocol::switchToNoBallPara;
 		break;
+	}
 	default:
 		return false;
 	}
@@ -212,7 +219,7 @@ bool rc17::PillarState::lockPillar(int type)
 
 		lastPixel = PillarVariables::pixelCoor.column;
 #ifdef USESERIALPORT		
-		Protocol::sendDataBySerialPort(0, 0, yawToFix, 0, 0, CommunicationVariables::serialPort);
+		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
 #endif
 	}
 	if (abs(pixelOffset) < thresL)

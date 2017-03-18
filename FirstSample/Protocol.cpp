@@ -44,7 +44,7 @@ void rc17::Protocol::sendDataBySerialPort(double data1, double data2, double dat
 	else
 		throw exception("串口未打开！");
 }
-void rc17::Protocol::sendDataBySerialPort(double data1, double data2, double data3, double data4, double data5, rc17::MySerial& s)
+void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
 	long tmp1 = data1 * 10, tmp2 = data2 * 10, tmp3 = data3 * 10,
 		tmp4 = data4, tmp5 = data5;
@@ -61,13 +61,13 @@ void rc17::Protocol::sendDataBySerialPort(double data1, double data2, double dat
 	bytesToSend[9] = (tmp4 & 0xff);
 	bytesToSend[10] = (tmp5 & 0xff00) >> 8;
 	bytesToSend[11] = (tmp5 & 0xff);
-	bytesToSend[12] = 0;
+	bytesToSend[12] = cmd;
 	bytesToSend[13] = (tmp1 + tmp2 + tmp3 + tmp4 + tmp5) & 0xff;
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;
 	
-	if (s.isOpened())
-		s.send(bytesToSend, 16);
+	if (CommunicationVariables::serialPort.isOpened())
+		CommunicationVariables::serialPort.send(bytesToSend, 16);
 	else
 		throw exception("串口未打开！");
 

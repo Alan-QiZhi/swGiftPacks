@@ -92,9 +92,9 @@ void rc17::Execute::initSerialPort()
 	CommunicationVariables::serialPort.auto_open();
 	CommunicationVariables::serialPort.openListenThread();
 
-	//Protocol::sendDataBySerialPort(0, 0, 3, 0, 0, rc17::CommunicationVariables::serialPort);
-	//Protocol::sendDataBySerialPort(0, 0, 0, 0, 0, rc17::CommunicationVariables::serialPort);
-	//rc17::Protocol::sendDataBySerialPort(-12.43, 15.75, 17, -260, 40, rc17::CommunicationVariables::serialPort);
+	//Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, 0, 0, 3, 0, 0);
+	//Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, 0, 0, 0, 0, 0);
+	//rc17::Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, -12.43, 15.75, 17, -260, 40);
 }
 
 void rc17::Execute::initSocket()

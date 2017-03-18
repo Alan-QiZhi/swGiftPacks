@@ -61,7 +61,7 @@ void rc17::scanfKey()
 			}
 		}
 		if (key == 'a')
-		{
+		{	
 			try
 			{
 				std::ofstream datafile;

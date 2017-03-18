@@ -3,6 +3,10 @@
 /*
 *		File： Point_Correct.cpp
 *
+*		目录：	1、初始化赋值
+*				2、计算及赋值函数
+*				3、滤波及自检函数
+*				4、主函数-接口函数
 *	程序内容：	对于开始修正量的判断：通过查看正态分布图，来找一个合适的临界值，增大和减小都会有比较好的变化，此时作为开始变化的值，再调整比例系数和可信度关系
 *   注		：	1、三次修正值保存是为了避免一种特殊情况，并非无用
 *				2、输入值的单位为 cm
@@ -11,20 +15,21 @@
 *				Ideal_Point			初始理想落点
 *				Confidence_Percent	用于计算的可信度，与生活中相反，便于计算，可信度设置为 1 - 真实可信度
 *				Correct_Max			修正值限幅
-*	
+*
 *	3-15 把偏航角修正加入实时计算公式，利用摄像头返回参数计算，加入可信度循环过程
 */
+
 /*1----------初始参数赋值-----------------1
 *
 *------------------------------------------*/
 
-static float Max_Value[7][10] = { { 0, 0, 0, 0, 10, -10 },
-{ 0, 0, 0, 0, 10, -10 },
-{ 2, -2.5,  2, -5,  10, -10,  125, -80, 195, -540 },
-{ 0, 0, 0, 0, 10, -10 },
-{ 0, 0, 0, 0, 10, -10 },
-{ 0, 0, 0, 0,10, -10 },
-{ 0, 0, 0, 0, 10, -10 },
+static float Max_Value[7][10] = { { 0, 0, 0, 0, 8, -8 },
+{ 0, 0, 0, 0, 8, -8 },
+{ 3, -3,  4, -4,   8, -8 ,  30, -30, 210, -240 },
+{ 0, 0, 0, 0,  8, -8 },
+{ 0, 0, 0, 0,  8, -8 },
+{ 0, 0, 0, 0,  8, -8 },
+{ 0, 0, 0, 0,  8, -8 },
 };//--范围检查值--
 
 static float Correct_DeltaAll[7][5] = {
@@ -37,8 +42,8 @@ static float Correct_DeltaAll[7][5] = {
 	{ 0, 0, 0, 0, 0, },
 };//--修正delta值总和--
 
-static float Correct_BestDelta[8][5] = { 
-	{ 7, 200},  //台子编号，最小偏查
+static float Correct_BestDelta[8][5] = {
+	{ 7, 200, 1, },  //台子编号，最小偏差，可信度
 	{ 0, 0, 0, 0, 0, },
 	{ 0, 0, 0, 0, 0, },
 	{ 0, 0, 0, 0, 0, },
@@ -49,53 +54,22 @@ static float Correct_BestDelta[8][5] = {
 };//--最好状态存储值--
 
 
-/*----------输出值滤波------------
-*
-* 说明	： 防止输出值太大，导致过修正
-*		：
-*		：
 
-*------------------------------------------*/
-float Check_Number(int Choice, float Correct_Par)
+  /*2----------计算高斯分布概率-----------------2
+  *
+  * 说明	：改编自matlab程序
+  *		：
+  *------------------------------------------*/
+float Gauss(float x, int mu, int sigma)
 {
-	if (Choice == 0)
-	{
-
-		if (Correct_Par > 23)
-		{
-			Correct_Par = 23;
-		}
-		else
-			if (Correct_Par < -23)
-			{
-				Correct_Par = -23;
-			}
-	}
-	else if (Choice == 1)
-	{
-		if (Correct_Par > 100)
-		{
-			Correct_Par = 100;
-		}
-		else
-			if (Correct_Par < -100)
-			{
-				Correct_Par = -100;
-			}
-	}
-	return Correct_Par;
-}
-
-//--计算高斯分布概率--
-double Gauss(double x, int mu, int sigma)
-{
-	double y;
-	double pi = 3.1416;
+	float y;
+	const float pi = 3.1416;
 
 	y = exp(-0.5 * ((x - mu) / sigma) * ((x - mu) / sigma)) / (sqrt(2 * pi) * sigma);
 
 	return y;
 }
+
 
 
 //--计算修正量大小--
@@ -110,7 +84,7 @@ void rc17::Correction::Correct_Point(double Correct_Par[], double Point[])
 	double Value_Corct[3] = { Correct_Par[3], Correct_Par[4], Correct_Par[5] };
 	double Correct_Max = 38;						//---为40cm处最低可信度时的修正量
 
-												//------参数值计算-----
+													//------参数值计算-----
 	Confidence_Percent = Correct_Par[0];
 	Point[0] = Point[0] / 20;					//---数据缩放
 	Point[1] = Point[1] / 20;
@@ -388,7 +362,7 @@ void rc17::Correction::calculate(int Plat_Num, double offsetX, double offsetZ, d
 
 void rc17::Correction::calculate2(int Plane_Num, float Correct_Par[], float Point[])
 {
-	static float par[] = { 0.2f, 0, 0, 0, 0, 0 ,0, 0};
+	static float par[] = { 0.2f, 0, 0, 0, 0, 0 ,0, 0 };
 	static int lastPlaneNum = -1;
 	if (lastPlaneNum != -1 && lastPlaneNum != Plane_Num)
 	{
@@ -421,32 +395,44 @@ void rc17::Correction::calculate2(int Plane_Num, float Correct_Par[], float Poin
 
 /*----------计算长度和高斯概率以及修正系数--
 *
-* 说明	：
+* 说明	：Length_To_Center发射装置到车体中心的距离
 *		：
 *------------------------------------------*/
 void Length_Coe_Cal(float Point[], const float Ideal_Point[], float Return[])
 {
 	float Length_Bound;
 	float P_Gauss_G;
-	float Bound = 80;
+	static float Bound = 80;
+	static float Gauss_Max = 0.48f;
+	static float Length_To_Center = 46.6f;
 	float Length;
-	float Gauss_Max = 0.48f;
 	float Possibility_Gau;
-	
-	
+
+	//-------利用已知的偏航角修正值进行xy校准-----
+	if (Point[3] > 0)
+	{
+		Point[0] = Point[0] - Length_To_Center * (1 - cos(Point[3] / 57.23));
+	}
+	else { Point[0] = Point[0] + Length_To_Center * (1 - cos(Point[3] / 57.23)); }
+
+	Point[1] = Point[1] + Length_To_Center * sin(Point[3] / 57.23);
+
 	Length = (Point[0] - Ideal_Point[0]) * (Point[0] - Ideal_Point[0]) + (Point[1] - Ideal_Point[1]) * (Point[1] - Ideal_Point[1]);
-	/*Length = ( 25 + i ) * ( 25 + i);*/
+
+	/*Length = ( 25 + i ) * ( 25 + i);--for test*/
+
 	if (Length > 6400)							//--为了防止传入的数据过大而炸掉
 	{
 		Length = 6400;
 	}
 
 	Length_Bound = (Bound - sqrt(Length)) / 40;	//--为了高斯函数计算
+
 	P_Gauss_G = static_cast<float>(Gauss(Length_Bound, 0, 1));
 
 	Possibility_Gau = P_Gauss_G / Gauss_Max;
 
-	Return[0] = sqrt(Length);					
+	Return[0] = sqrt(Length);
 	Return[1] = P_Gauss_G;
 	Return[2] = Possibility_Gau;
 }
@@ -466,7 +452,7 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 //	float Row[],	float Yaw[]	)
 {
 	float	Slope_Now;
-	const float Slope[2] = { -1, 1 };  
+	const float Slope[2] = { -1, 1 };
 	const float Yaw_Coe = 1.3;
 	int		Limit_Y = 28;
 	float	Speed1[4];
@@ -485,93 +471,93 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 	{
 		Slope_Now = Point[1];
 	}
-	
+
 	//--选取具体台子--
 	switch (Plane_Num)
 	{
-		case 0: 
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
+	case 0:
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
 
-		case 1:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
+	case 1:
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
 
-		case 2:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+	case 2:
+		Speed1[0] = 10;		Speed1[1] = -15;		Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = -200;	Speed2[1] = 95;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = -1.82;	Pitch1[1] = 2.69;		Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 3.52;	Roll1[1] = 2.71;		Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 2.9;		Yaw1[1] = -1.95;		Yaw1[2] = 0;		Yaw1[3] = 0;
 
-				break;
+		break;
 
-		case 3:   //前                   后                     左              右
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
-		
-		case 4:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
+	case 3:   //前                   后                     左              右
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
 
-		case 5:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
+	case 4:
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
 
-		case 6:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
+	case 5:
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
 
-		default:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
-				break;
+	case 6:
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
+
+	default:
+		Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+		Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+		Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+		Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+		Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+		break;
 
 	}
-	
+
 	//--判断具体方向并选取--方案一，用斜率
-	if ((Point[0] >= 0) && (Slope_Now >= Slope[0]) && (Slope_Now <= Slope[1]) )			//落点在右
+	if ((Point[0] >= 0) && (Slope_Now >= Slope[0]) && (Slope_Now <= Slope[1]))			//落点在右
 	{
 		Flag_Direction = 3;
 	}
 	else if ((Point[0] <= 0) && (Slope_Now >= Slope[0]) && (Slope_Now <= Slope[1]))		//落点在左
-	{	
+	{
 		Flag_Direction = 2;
 	}
 	else if (((Point[1] >= Limit_Y) && (Slope_Now <= Slope[0])) || ((Point[1] >= Limit_Y) && (Slope_Now >= Slope[1])))	//落点在前
 	{
-			Flag_Direction = 0;
+		Flag_Direction = 0;
 	}
 	else if (((Point[1] <= -Limit_Y) && (Slope_Now >= Slope[1])) || ((Point[1] <= -Limit_Y) && (Slope_Now <= Slope[0])))	//落点在后
 	{
-			Flag_Direction = 1;
+		Flag_Direction = 1;
 	}
 	else
 	{
@@ -584,10 +570,48 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 	//--给具体参数赋值--
 	Par_Coe[0] = Pitch1[Flag_Direction];
 	Par_Coe[1] = Roll1[Flag_Direction];
-	Par_Coe[2] = static_cast<float>(atan(Point[0] / Point[2])) * 57.325 * Yaw_Coe;
+	Par_Coe[2] = static_cast<float>(atan(Point[0] / Point[2])) * 57.325 * Yaw_Coe + Yaw1[Flag_Direction];
 	Par_Coe[3] = Speed1[Flag_Direction];
 	Par_Coe[4] = Speed2[Flag_Direction];
-	
+
+}
+
+
+/*----------输出值滤波---------------------3
+*
+* 说明	： 防止输出值太大，导致过修正
+*		：
+*		：
+
+*------------------------------------------*/
+float Check_Number(int Choice, float Correct_Par)
+{
+	if (Choice == 0)
+	{
+
+		if (Correct_Par > 23)
+		{
+			Correct_Par = 23;
+		}
+		else
+			if (Correct_Par < -23)
+			{
+				Correct_Par = -23;
+			}
+	}
+	else if (Choice == 1)
+	{
+		if (Correct_Par > 100)
+		{
+			Correct_Par = 100;
+		}
+		else
+			if (Correct_Par < -100)
+			{
+				Correct_Par = -100;
+			}
+	}
+	return Correct_Par;
 }
 
 
@@ -618,7 +642,7 @@ void Fliter_Output(float Correct_Par[])
 * 说明	： 当输出值超范围时，及时报错
 *		：正常为0
 *		：错误为1
-		：Confidence_Limit 可信度的，另一个应用，来判断是否需要启动最优值
+：Confidence_Limit 可信度的，另一个应用，来判断是否需要启动最优值
 *------------------------------------------*/
 void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 {
@@ -632,7 +656,7 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 	{
 		Change_Final[i] = Correct_Par[i + 1] + Correct_DeltaAll[Plane_Num][i];
 
-		if ( (Change_Final[i] > Max_Value[Plane_Num][2 * i])  ||	(Change_Final[i] < Max_Value[Plane_Num][2 * i + 1]) )
+		if ((Change_Final[i] > Max_Value[Plane_Num][2 * i]) || (Change_Final[i] < Max_Value[Plane_Num][2 * i + 1]))
 		{
 			if (Correct_Par[0] > Confidence_Limit)		//--信任度已炸--					
 			{
@@ -640,7 +664,7 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 			}
 			else
 			{
-				Correct_Par[i+1] = 0;
+				Correct_Par[i + 1] = 0;
 			}
 
 		}//if
@@ -651,7 +675,7 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 	{
 		for (i = 0; i < 5; i++)
 		{
-			Correct_DeltaAll[Plane_Num][i] = Correct_DeltaAll[Plane_Num][i] + Correct_Par[i+1];
+			Correct_DeltaAll[Plane_Num][i] = Correct_DeltaAll[Plane_Num][i] + Correct_Par[i + 1];
 		}
 	}
 	else
@@ -660,7 +684,7 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 
 		for (j = 0; j < 5; j++)
 		{
-			Correct_Par[j+1] = -(Correct_DeltaAll[Plane_Num][j] - Correct_BestDelta[Plane_Num+1][j]);
+			Correct_Par[j + 1] = -(Correct_DeltaAll[Plane_Num][j] - Correct_BestDelta[Plane_Num + 1][j]);
 		}
 
 		for (j = 0; j < 5; j++)
@@ -680,10 +704,23 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 *		：
 
 *------------------------------------------*/
-void StateBest_Check(int Plane_Num,float  Correct_Par[],float Length_Now)
+void StateBest_Check(int Plane_Num, float  Correct_Par[], float Length_Now)
 {
 	//int Good_LengthMin = 30;
 	int i;
+
+	if (Correct_Par[0] == 0.97)
+	{
+		if (Correct_BestDelta[0][2] == 0.97)
+		{
+			Correct_Par[0] = 0.83;
+			Correct_BestDelta[0][2] = 0.97;
+		}
+		else {
+			Correct_Par[0] = 0.3;
+			Correct_BestDelta[0][2] = 0;
+		}
+	}
 
 	if (Plane_Num == Correct_BestDelta[0][0])											//--检查是否台子变化
 	{
@@ -692,7 +729,7 @@ void StateBest_Check(int Plane_Num,float  Correct_Par[],float Length_Now)
 			Correct_BestDelta[0][1] = Length_Now;
 			for (i = 0; i < 5; i++)
 			{
-				Correct_BestDelta[Plane_Num+1][i] = Correct_DeltaAll[Plane_Num][i];
+				Correct_BestDelta[Plane_Num + 1][i] = Correct_DeltaAll[Plane_Num][i];
 			}
 		}
 	}
@@ -730,7 +767,7 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 	float Confidence_Percent;
 	float Length_ToCenter;
 	float P_Gauss_G;
-	const float P_Gauss_Flag= 0.18f;					//--对应30cm
+	const float P_Gauss_Flag = 0.18f;					//--对应30cm
 	const float Correct_Max = 0.9f;
 	float Percent_Gau;
 	const float Ideal_Point[2] = { 0, 0 };
@@ -739,12 +776,17 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 	float Par_Coe[5] = { 0, 0, 0, 0 ,0 };
 	int flag;
 
-	//------参数值计算-----
+	//------可信度赋值-----
 	Confidence_Percent = Correct_Par[0];
 
 
+	//-------读取相应的修正参数-----
+	Par_Init(Plane_Num, Point, Par_Coe);
+
+
 	//------计算距离和高斯分布概率、修正系数-----
-	Length_Coe_Cal( Point , Ideal_Point , Return );
+	Point[3] = Par_Coe[2] * Confidence_Percent;
+	Length_Coe_Cal(Point, Ideal_Point, Return);
 	Length_ToCenter = Return[0];
 	P_Gauss_G = Return[1];
 	Percent_Gau = Return[2];
@@ -755,17 +797,16 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 
 
 	//------判断是否需要修正以及相应修正量-----
-	if (P_Gauss_G > P_Gauss_Flag)  
+	if (P_Gauss_G > P_Gauss_Flag)
 	{
 		flag = 1;
-		Par_Init(Plane_Num, Point, Par_Coe);							//--读取相应的修正参数
 
 		Value_Corct[1] = Value_Corct[0];
-		Value_Corct[0] = Percent_Gau ;
-		
-		if ( ( Value_Corct[0] - Value_Corct[1] ) > 0.3 )				//-- 一次限幅
+		Value_Corct[0] = Percent_Gau;
+
+		if ((Value_Corct[0] - Value_Corct[1]) > 0.3)				//-- 一次限幅
 		{
-			Value_Corct[0] =( Value_Corct[1] * + Value_Corct[0] * 0.7f );
+			Value_Corct[0] = (Value_Corct[1] * +Value_Corct[0] * 0.7f);
 		}
 
 		if (Value_Corct[0] > Correct_Max)								//-- 二次限幅
@@ -786,15 +827,15 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 	//------更新可信度----------
 	if (Length_ToCenter < 35)
 	{
-		Confidence_Percent = Confidence_Percent - P_Gauss_G  / 2;		//信任度修改 -> 正常情况
+		Confidence_Percent = Confidence_Percent - P_Gauss_G / 2;		//信任度修改 -> 正常情况
 
 		if (Confidence_Percent < 0.03f)									//--信任度限幅
 			Confidence_Percent = 0.03f;
 	}
 	else
 	{
-		Confidence_Percent = Confidence_Percent + P_Gauss_G / 2;		//--信任度修改->减小信任度
-		//( P_Gauss * 10 ) / Length_Bound
+		Confidence_Percent = Confidence_Percent + P_Gauss_G * 4 / 11;		//--信任度修改->减小信任度
+																			//( P_Gauss * 10 ) / Length_Bound
 
 		if (Confidence_Percent > 0.97f)									//--信任度限幅
 			Confidence_Percent = 0.97f;

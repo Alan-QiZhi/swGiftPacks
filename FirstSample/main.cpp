@@ -267,9 +267,10 @@ int main(int argc, char* argv[])
 		hPipe = CreateFile(pStrPipeName, GENERIC_READ | GENERIC_WRITE, 0,
 			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	}
-	std::thread t_Correct(rc17::Correct);
+	
     int exitCode = EXIT_SUCCESS;
 	myExe.init();
+	std::thread t_Correct(rc17::Correct);
     try
     {
         CToFCamera::InitProducer();

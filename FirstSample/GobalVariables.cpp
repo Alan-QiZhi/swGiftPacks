@@ -41,7 +41,7 @@ int const rc17::PillarVariables::pillarBallCol[7]
 
 int const rc17::PillarVariables::pillarLocRow[7]
 {
-	367,463,406,341,405,469,425
+	367,463,416,341,415,469,425
 };
 
 double rc17::PillarVariables::correctedYaw[7]

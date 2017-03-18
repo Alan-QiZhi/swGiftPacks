@@ -7,12 +7,14 @@ namespace rc17
 	public :
 		enum COMCMD
 		{
-			HitBall = 1,
-			HitPillar
+			switchToNoBallPara = 0,
+			switchToBallPara = 1,
+			shoot,
+			correctFinish
 		};
 		static void sendDataBySerialPort(long data1 = 0, long data2 = 0, long data3 = 0);
 		static void sendDataBySerialPort(double data1 = 0, double data2 = 0, double data3 = 0);
-		static void sendDataBySerialPort(double data1, double data2, double data3, double data4, double data5, rc17::MySerial &s);
+		static void sendDataBySerialPort(int cmd, double data1, double data2, double data3, double data4, double data5);
 		static void sendDataForBall();
 		static void sendCmd(int cmd);
 		static void sendDataBySocket(long data1 = 0, long data2 = 0, long data3 = 0);

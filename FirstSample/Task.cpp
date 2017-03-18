@@ -10,7 +10,7 @@ void rc17::Correct()
 	bool LastHadBall = false;
 	while(ThreadFlag::run)
 	{
-		if(1)//初始修车姿态状态
+		if(ThreadFlag::t_Flag == true)//初始修车姿态状态
 		{
 			if (PillarState::hasBall() == true)
 			{
@@ -36,14 +36,14 @@ void rc17::Correct()
 		if (readyToShoot == true)//发射状态
 		{
 			if(PillarState::hasBall() == true)
-				Protocol::sendCmd(Protocol::switchToBallPara);
+				Protocol::sendCmd(Protocol::BallPara);
 			else
-				Protocol::sendCmd(Protocol::switchToNoBallPara);
+				Protocol::sendCmd(Protocol::NoBallPara);
 			this_thread::sleep_for(chrono::milliseconds(50));
 
-			Protocol::sendCmd(Protocol::shoot);
+			Protocol::sendCmd(Protocol::Shoot);
 			this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕
-			readyToShoot = false;
+			//readyToShoot = false;
 			//if (LastHadBall != PillarState::hasBall())
 			//{
 			//	Protocol::sendCmd(0);

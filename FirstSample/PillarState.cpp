@@ -190,14 +190,14 @@ bool rc17::PillarState::lockPillar(int type)
 	{
 		pixelOffset = PillarVariables::pillarBallCol[PillarIndex(PillarVariables::index)]
 			- PillarVariables::pixelCoor.column;
-		cmd = Protocol::switchToBallPara;
+		cmd = Protocol::BallPara;
 		break;
 	}
 	case NoBall:
 	{
 		pixelOffset = PillarVariables::pillarLocCol[PillarIndex(PillarVariables::index)]
 			- PillarVariables::pixelCoor.column;
-		cmd = Protocol::switchToNoBallPara;
+		cmd = Protocol::NoBallPara;
 		break;
 	}
 	default:

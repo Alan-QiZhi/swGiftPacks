@@ -7,10 +7,10 @@ namespace rc17
 	public :
 		enum COMCMD
 		{
-			switchToNoBallPara = 0,
-			switchToBallPara = 1,
-			shoot,
-			correctFinish
+			NoBallPara = 0,
+			BallPara = 1,
+			Shoot,
+			CorrectFinish
 		};
 		static void sendDataBySerialPort(long data1 = 0, long data2 = 0, long data3 = 0);
 		static void sendDataBySerialPort(double data1 = 0, double data2 = 0, double data3 = 0);

@@ -31,30 +31,31 @@ void rc17::Correct()
 			//	LastHadBall = PillarState::hasBall();
 			//	//修车姿态完成
 			//}
+
+			if (readyToShoot == true)//发射状态
+			{
+				if (PillarState::hasBall() == true)
+					Protocol::sendCmd(Protocol::BallPara);
+				else
+					Protocol::sendCmd(Protocol::NoBallPara);
+				this_thread::sleep_for(chrono::milliseconds(50));
+
+				Protocol::sendCmd(Protocol::Shoot);
+				this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕
+				//if (LastHadBall != PillarState::hasBall())
+				//{
+				//	Protocol::sendCmd(0);
+				//	readyToShoot = false;
+				//	ThreadFlag::t_Flag == true;
+				//}
+				continue;
+			}
 		}
 
-		if (readyToShoot == true)//发射状态
-		{
-			if(PillarState::hasBall() == true)
-				Protocol::sendCmd(Protocol::BallPara);
-			else
-				Protocol::sendCmd(Protocol::NoBallPara);
-			this_thread::sleep_for(chrono::milliseconds(50));
 
-			Protocol::sendCmd(Protocol::Shoot);
-			this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕
-			//readyToShoot = false;
-			//if (LastHadBall != PillarState::hasBall())
-			//{
-			//	Protocol::sendCmd(0);
-			//	readyToShoot = false;
-			//	ThreadFlag::t_Flag == true;
-			//}
-			continue;
-		}
 		//500ms 执行一次
 		
-		this_thread::sleep_for(chrono::milliseconds(300));
+		this_thread::sleep_for(chrono::milliseconds(500));
 
 	}
 }

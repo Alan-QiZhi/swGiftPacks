@@ -208,7 +208,7 @@ bool rc17::PillarState::lockPillar(int type)
 
 	if (abs(pixelOffset) > thresL && abs(pixelOffset) < thresH)
 	{
-		double kP = 1;
+		double kP = 0.6;
 		double kI = 0.0;
 		double kD = 0;
 

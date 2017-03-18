@@ -44,14 +44,15 @@ void rc17::Execute::run(HObject _depthImage)
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
 	PillarVariables::pixelCoor = PillarState::getPillarPixel();
-	cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
+	//cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
 
 	//获得柱子的世界坐标
-	if (PillarVariables::pixelCoor.row>0 && PillarVariables::pixelCoor.column > 0)
+	if (PillarVariables::pixelCoor.row > 0 && PillarVariables::pixelCoor.column > 0) {
 		PillarVariables::worldCoor = CameraVariables::getWorldCoor(PillarVariables::pixelCoor.row, PillarVariables::pixelCoor.column);
-
+		//cout << "worldCoorZ: " << PillarVariables::worldCoor.z << endl;
+	}
 	//追踪飞盘(没有球的时候)
-	if (ThreadFlag::t_Flag == false)
+	if (PillarState::hasBall() == false)
 	{
 		saucerTrack();
 	}
@@ -91,7 +92,12 @@ void rc17::Execute::initSerialPort()
 {
 	CommunicationVariables::serialPort.auto_open();
 	CommunicationVariables::serialPort.openListenThread();
-
+	//Sleep(1000);
+	//Protocol::sendCmd(Protocol::Shoot);
+	//Protocol::sendDataBySerialPort(Protocol::NoBallPara, 0, 0, 0.5 + 1, 0, 0);
+	//Sleep(1000);
+	//Protocol::sendDataBySerialPort(Protocol::NoBallPara, 0, 0, -1, 0, 0);
+	//int a = 0;
 	//Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, 0, 0, 3, 0, 0);
 	//Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, 0, 0, 0, 0, 0);
 	//rc17::Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, -12.43, 15.75, 17, -260, 40);

@@ -10,35 +10,25 @@ void rc17::Correct()
 	bool LastHadBall = false;
 	while(ThreadFlag::run)
 	{
-		if(ThreadFlag::t_Flag == true)//初始修车姿态状态
+		if(ThreadFlag::t_Flag == true)
 		{
 			if (PillarState::hasBall() == true)
 			{
 				cout << "ball" << endl;
-				//Protocol::sendCmd(Protocol::switchToBallPara);
 				readyToShoot = PillarState::lockPillar(PillarState::WithBall);
 			}
 			else
 			{
-				//Protocol::sendCmd(0);
 				readyToShoot = PillarState::lockPillar(PillarState::NoBall);
 			}
-			//if (readyToShoot == true)
-			//{
-			//	//Protocol::sendCmd(Protocol::correctFinish);
-			//	//this_thread::sleep_for(chrono::milliseconds(50));
-			//	//ThreadFlag::t_Flag = false;//自此进入正常发射阶段
-			//	LastHadBall = PillarState::hasBall();
-			//	//修车姿态完成
-			//}
 
 			if (readyToShoot == true)//发射状态
 			{
-				if (PillarState::hasBall() == true)
-					Protocol::sendCmd(Protocol::BallPara);
-				else
-					Protocol::sendCmd(Protocol::NoBallPara);
-				this_thread::sleep_for(chrono::milliseconds(50));
+				//if (PillarState::hasBall() == true)
+				//	Protocol::sendCmd(Protocol::BallPara);
+				//else
+				//	Protocol::sendCmd(Protocol::NoBallPara);
+				//this_thread::sleep_for(chrono::milliseconds(50));
 
 				Protocol::sendCmd(Protocol::Shoot);
 				this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕
@@ -51,7 +41,7 @@ void rc17::Correct()
 				continue;
 			}
 		}
-
+		//cout << ThreadFlag::t_Flag << endl;
 
 		//500ms 执行一次
 		

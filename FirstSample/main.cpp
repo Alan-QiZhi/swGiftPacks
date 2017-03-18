@@ -221,6 +221,7 @@ bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 		//if (HDevWindowStack::IsOpen())
 		//	DispObj(confidenceImage, HDevWindowStack::GetActive());
 		//WriteImage(confidenceImage, "tiff", 0, "C:/Users/robocon2017/Desktop/2/confidence" );
+		//WriteImage(depthImage, "tiff", 0, "C:/Users/robocon2017/Desktop/2/depth");
 		/*****************************************************************/
 
 			

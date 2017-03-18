@@ -46,6 +46,8 @@ void rc17::Protocol::sendDataBySerialPort(double data1, double data2, double dat
 }
 void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
+	if (ThreadFlag::t_Flag == false)
+		return;
 	long tmp1 = data1 * 10, tmp2 = data2 * 10, tmp3 = data3 * 10,
 		tmp4 = data4, tmp5 = data5;
 	unsigned char bytesToSend[16];
@@ -160,3 +162,13 @@ void rc17::Protocol::sendDataBySocket(double data1, double data2, double data3)
 
 	send(rc17::CommunicationVariables::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
 }
+
+void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)
+{
+	pitch = correctPara[1];
+	roll = correctPara[2];
+	bigWheel = correctPara[4];
+	smallWheel = correctPara[5];
+	haveData = true;
+}
+rc17::Protocol::DelayCorrectVariables rc17::Protocol::delayCorrectVariables[7] = {};

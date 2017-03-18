@@ -186,7 +186,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					//rc17::Correction::calculate(rc17::PillarVariables::index, rotatedOffset.x, rotatedOffset.y, tmpx, tmpz, tmpyaw);
 
 					float* Correct_Par = new float[8];
-					float* rtOffset = new float[3];
+					float* rtOffset = new float[4];
 					rtOffset[0] = rotatedOffset.x;
 					rtOffset[1] = rotatedOffset.y;
 					rtOffset[2] = PillarVariables::worldCoor.z/10;
@@ -196,6 +196,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					//cout << " ÊäÈëxÆ«²î: " << rtOffset[0] << " ÊäÈëzÆ«²î: " << rtOffset[1] << endl;
 
 					rc17::Correction::calculate2(PillarVariables::index, Correct_Par, rtOffset);
+					rc17::Protocol::delayCorrectVariables[PillarVariables::index].assign(Correct_Par);
 					PillarVariables::correctedYaw[PillarVariables::index] += Correct_Par[3];
 					cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
 						Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
@@ -203,7 +204,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 					try
 					{
 						//if(Correct_Par[3])
-							//rc17::Protocol::sendDataBySerialPort(Protocol::switchToNoBallPara, (double)Correct_Par[1], (double)Correct_Par[2], (double)Correct_Par[3], -(double)Correct_Par[4], -(double)Correct_Par[5]);
+							//rc17::Protocol::sendDataBySerialPort(Protocol::NoBallPara, (double)Correct_Par[1], (double)Correct_Par[2], (double)Correct_Par[3], -(double)Correct_Par[4], -(double)Correct_Par[5]);
 					}
 					catch(...)
 					{

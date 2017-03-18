@@ -196,7 +196,7 @@ bool rc17::PillarState::lockPillar(int type)
 	case NoBall:
 	{
 		pixelOffset = PillarVariables::pillarLocCol[PillarIndex(PillarVariables::index)]
-			- PillarVariables::pixelCoor.column;
+			- PillarVariables::pixelCoor.column + PillarVariables::correctedYaw[PillarVariables::index]/57.0*640;
 		cmd = Protocol::NoBallPara;
 		break;
 	}
@@ -216,10 +216,39 @@ bool rc17::PillarState::lockPillar(int type)
 		static int lastPixel = PillarVariables::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
 		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVariables::pixelCoor.column);
-
+		
 		lastPixel = PillarVariables::pixelCoor.column;
 #ifdef USESERIALPORT		
-		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
+		if (rc17::Protocol::delayCorrectVariables[PillarVariables::index].haveData)//捎带发送上次修正值
+		{
+			Protocol::sendDataBySerialPort(cmd, Protocol::delayCorrectVariables[PillarVariables::index].pitch,
+				Protocol::delayCorrectVariables[PillarVariables::index].roll,
+				yawToFix + 1, 
+				-Protocol::delayCorrectVariables[PillarVariables::index].bigWheel,
+				-Protocol::delayCorrectVariables[PillarVariables::index].smallWheel);
+			cout << "Sent:   " << Protocol::delayCorrectVariables[PillarVariables::index].pitch << "   " << Protocol::delayCorrectVariables[PillarVariables::index].roll << endl << endl;
+			Protocol::delayCorrectVariables[PillarVariables::index].haveData = 0;
+		}
+		else
+			//if (abs(yawToFix) < 1)
+			//	if (yawToFix > 0)
+			//	{
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1, 0, 0);
+			//		Sleep(50);
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, -1, 0, 0);
+			//	}
+			//	else
+			//	{
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1, 0, 0);
+			//		Sleep(50);
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, 1, 0, 0);
+			//	}
+
+			//else
+		{
+			Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
+		}
+		
 #endif
 	}
 	if (abs(pixelOffset) < thresL)

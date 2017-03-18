@@ -31,7 +31,7 @@ int rc17::PillarVariables::index = 0;
 
 int const rc17::PillarVariables::pillarLocCol[7]
 {
-	-128,271,295,285,235,297,274
+	-128,271,275,285,235,297,274
 };
 
 int const rc17::PillarVariables::pillarBallCol[7]

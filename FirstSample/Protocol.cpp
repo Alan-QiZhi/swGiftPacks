@@ -103,6 +103,8 @@ void rc17::Protocol::sendDataForBall()
 
 void rc17::Protocol::sendCmd(int cmd)
 {
+	if (ThreadFlag::t_Flag == false)
+		return;
 	unsigned char bytesToSend[16];
 	bytesToSend[0] = 0xb6;
 	bytesToSend[1] = 0xab;

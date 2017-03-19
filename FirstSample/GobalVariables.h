@@ -66,6 +66,17 @@ namespace rc17
 		static bool t_Flag;
 		static bool run;
 	};
+
+	class CorrectParam
+	{
+	public:
+		static double pitch;
+		static double roll;
+		static double bigWheel;
+		static double smallWheel;
+		static bool update;
+		static void assign(float* correctPara);
+	};
 }
 
 struct myCoor3D

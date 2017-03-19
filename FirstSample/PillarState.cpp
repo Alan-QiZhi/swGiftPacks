@@ -219,36 +219,47 @@ bool rc17::PillarState::lockPillar(int type)
 		
 		lastPixel = PillarVariables::pixelCoor.column;
 #ifdef USESERIALPORT		
-		if (rc17::Protocol::delayCorrectVariables[PillarVariables::index].haveData)//捎带发送上次修正值
+		if (CorrectParam::update == true)//捎带发送上次修正值
 		{
-			Protocol::sendDataBySerialPort(cmd, Protocol::delayCorrectVariables[PillarVariables::index].pitch,
-				Protocol::delayCorrectVariables[PillarVariables::index].roll,
-				yawToFix + 1, 
-				-Protocol::delayCorrectVariables[PillarVariables::index].bigWheel,
-				-Protocol::delayCorrectVariables[PillarVariables::index].smallWheel);
-			cout << "Sent:   " << Protocol::delayCorrectVariables[PillarVariables::index].pitch << "   " << Protocol::delayCorrectVariables[PillarVariables::index].roll << endl << endl;
-			Protocol::delayCorrectVariables[PillarVariables::index].haveData = 0;
-		}
-		else
 			if (abs(yawToFix) < 1)
 				if (yawToFix > 0)
 				{
-					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.5, 0, 0);
+					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
 					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, 0, 0, -1.5, 0, 0);
+					Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, -1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
 				}
 				else
 				{
-					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.5, 0, 0);
+					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
 					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, 0, 0, 1.5, 0, 0);
+					Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, 1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
+				}
+			else
+				Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, yawToFix, 
+					CorrectParam::bigWheel, -CorrectParam::smallWheel);
+			CorrectParam::update = false;
+		}
+		else
+		{
+			if (abs(yawToFix) < 1)
+				if (yawToFix > 0)
+				{
+					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
+					this_thread::sleep_for(chrono::milliseconds(500));
+					Protocol::sendDataBySerialPort(cmd, 0, 0, -1.1, 0, 0);
+				}
+				else
+				{
+					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
+					this_thread::sleep_for(chrono::milliseconds(500));
+					Protocol::sendDataBySerialPort(cmd, 0, 0, 1.1, 0, 0);
 				}
 
 			else
 			{
 				Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
 			}
-		
+		}
 #endif
 	}
 	if (abs(pixelOffset) < thresL)

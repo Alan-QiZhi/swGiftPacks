@@ -54,3 +54,18 @@ rc17::SocketClient rc17::CommunicationVariables::mySocketClient;
 
 bool rc17::ThreadFlag::t_Flag = false;
 bool rc17::ThreadFlag::run = true;
+
+double rc17::CorrectParam::pitch = 0;
+double rc17::CorrectParam::roll = 0;
+double rc17::CorrectParam::bigWheel = 0;
+double rc17::CorrectParam::smallWheel = 0;
+bool rc17::CorrectParam::update = false;
+
+void rc17::CorrectParam::assign(float* params)
+{
+	pitch = params[1];
+	roll = params[2];
+	bigWheel = params[4];
+	smallWheel = params[5];
+	update = true;
+}

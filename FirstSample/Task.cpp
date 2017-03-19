@@ -6,6 +6,7 @@
 
 void rc17::Correct()
 {
+	
 	bool readyToShoot = true;
 	bool LastHadBall = false;
 	while(ThreadFlag::run)
@@ -32,21 +33,11 @@ void rc17::Correct()
 
 				Protocol::sendCmd(Protocol::Shoot);
 				this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕
-				//if (LastHadBall != PillarState::hasBall())
-				//{
-				//	Protocol::sendCmd(0);
-				//	readyToShoot = false;
-				//	ThreadFlag::t_Flag == true;
-				//}
 				continue;
 			}
 		}
-		//cout << ThreadFlag::t_Flag << endl;
-
 		//500ms 执行一次
-		
 		this_thread::sleep_for(chrono::milliseconds(500));
-
 	}
 }
 

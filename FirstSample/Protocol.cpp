@@ -1,49 +1,6 @@
 #include "Protocol.h"
 #include "GobalVariables.h"
 
-void rc17::Protocol::sendDataBySerialPort(long data1, long data2, long data3)
-{	
-	unsigned char bytesToSend[12];
-	bytesToSend[0] = 0xb6;
-	bytesToSend[1] = 0xab;
-	bytesToSend[2] = (data1 & 0xff00) >> 8;
-	bytesToSend[3] = (data1 & 0xff);
-	bytesToSend[4] = (data2 & 0xff00) >> 8;
-	bytesToSend[5] = (data2 & 0xff);
-	bytesToSend[6] = (data3 & 0xff00) >> 8;
-	bytesToSend[7] = (data3 & 0xff);
-	bytesToSend[8] = (data1 + data2 + data3) & 0xff;
-	bytesToSend[9] = 0;
-	bytesToSend[10] = 0xbe;
-	bytesToSend[11] = 0xa9;
-
-	if (CommunicationVariables::serialPort.isOpened())
-		CommunicationVariables::serialPort.send(bytesToSend, 12);
-	else
-		throw exception("串口未打开！");
-}
-
-void rc17::Protocol::sendDataBySerialPort(double data1, double data2, double data3)
-{
-	unsigned char bytesToSend[12];
-	bytesToSend[0] = 0xb6;
-	bytesToSend[1] = 0xab;
-	bytesToSend[2] = (static_cast<long>(data1) & 0xff00) >> 8;
-	bytesToSend[3] = (static_cast<long>(data1) & 0xff);
-	bytesToSend[4] = (static_cast<long>(data2) & 0xff00) >> 8;
-	bytesToSend[5] = (static_cast<long>(data2) & 0xff);
-	bytesToSend[6] = (static_cast<long>(data3) & 0xff00) >> 8;
-	bytesToSend[7] = (static_cast<long>(data3) & 0xff);
-	bytesToSend[8] = (static_cast<long>(data1 + data2 + data3)) & 0xff;
-	bytesToSend[9] = 0;
-	bytesToSend[10] = 0xbe;
-	bytesToSend[11] = 0xa9;
-
-	if (CommunicationVariables::serialPort.isOpened())
-		CommunicationVariables::serialPort.send(bytesToSend, 12);
-	else
-		throw exception("串口未打开！");
-}
 void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
 	if (ThreadFlag::t_Flag == false)
@@ -164,13 +121,3 @@ void rc17::Protocol::sendDataBySocket(double data1, double data2, double data3)
 
 	send(rc17::CommunicationVariables::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
 }
-
-void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)
-{
-	pitch = correctPara[1];
-	roll = correctPara[2];
-	bigWheel = correctPara[4];
-	smallWheel = correctPara[5];
-	haveData = true;
-}
-rc17::Protocol::DelayCorrectVariables rc17::Protocol::delayCorrectVariables[7] = {};

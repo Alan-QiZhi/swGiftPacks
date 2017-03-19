@@ -230,24 +230,24 @@ bool rc17::PillarState::lockPillar(int type)
 			Protocol::delayCorrectVariables[PillarVariables::index].haveData = 0;
 		}
 		else
-			//if (abs(yawToFix) < 1)
-			//	if (yawToFix > 0)
-			//	{
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1, 0, 0);
-			//		Sleep(50);
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, -1, 0, 0);
-			//	}
-			//	else
-			//	{
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1, 0, 0);
-			//		Sleep(50);
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, 1, 0, 0);
-			//	}
+			if (abs(yawToFix) < 1)
+				if (yawToFix > 0)
+				{
+					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.5, 0, 0);
+					this_thread::sleep_for(chrono::milliseconds(500));
+					Protocol::sendDataBySerialPort(cmd, 0, 0, -1.5, 0, 0);
+				}
+				else
+				{
+					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.5, 0, 0);
+					this_thread::sleep_for(chrono::milliseconds(500));
+					Protocol::sendDataBySerialPort(cmd, 0, 0, 1.5, 0, 0);
+				}
 
-			//else
-		{
-			Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
-		}
+			else
+			{
+				Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
+			}
 		
 #endif
 	}

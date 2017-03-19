@@ -24,11 +24,11 @@ void rc17::Correct()
 
 			if (readyToShoot == true)//发射状态
 			{
-				//if (PillarState::hasBall() == true)
-				//	Protocol::sendCmd(Protocol::BallPara);
-				//else
-				//	Protocol::sendCmd(Protocol::NoBallPara);
-				//this_thread::sleep_for(chrono::milliseconds(50));
+				if (PillarState::hasBall() == true)
+					Protocol::sendCmd(Protocol::BallPara);
+				else
+					Protocol::sendCmd(Protocol::NoBallPara);
+				this_thread::sleep_for(chrono::milliseconds(50));
 
 				Protocol::sendCmd(Protocol::Shoot);
 				this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕

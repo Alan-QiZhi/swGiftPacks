@@ -226,17 +226,20 @@ bool rc17::PillarState::lockPillar(int type)
 				{
 					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
 					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, -1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
+					//Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, -1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
+					Protocol::sendDataBySerialPort(cmd, -1.1, Protocol::correctPara[PillarVariables::index]);
 				}
 				else
 				{
 					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
 					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, 1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
+					//Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, 1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
+					Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVariables::index]);
 				}
 			else
-				Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, yawToFix, 
-					CorrectParam::bigWheel, -CorrectParam::smallWheel);
+				//Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, yawToFix, 
+				//	CorrectParam::bigWheel, -CorrectParam::smallWheel);
+				Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVariables::index]);
 			CorrectParam::update = false;
 		}
 		else

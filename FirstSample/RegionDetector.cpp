@@ -174,44 +174,33 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 
 				rc17::Protocol::sendDataBySocket(tmpx, tmpz, tmpyaw);
 # endif
-					Coor3D tmpOffset, rotatedOffset;
-					tmpOffset.x = offset[0];
-					tmpOffset.y = offset[1];
+				Coor3D tmpOffset, rotatedOffset;
+				tmpOffset.x = offset[0];
+				tmpOffset.y = offset[1];
 					
-					rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CameraVariables::cameraRotate);
-					cout << " x偏差: " << setw(2) << rotatedOffset.x << " z偏差: " << setw(2) << rotatedOffset.y << endl;
-					//旋转到云台方向偏差
+				rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CameraVariables::cameraRotate);
+				cout << " x偏差: " << setw(2) << rotatedOffset.x << " z偏差: " << setw(2) << rotatedOffset.y << endl;
+				//旋转到云台方向偏差
 
-					//double tmpx, tmpz, tmpyaw;
-					//rc17::Correction::calculate(rc17::PillarVariables::index, rotatedOffset.x, rotatedOffset.y, tmpx, tmpz, tmpyaw);
+				//double tmpx, tmpz, tmpyaw;
+				//rc17::Correction::calculate(rc17::PillarVariables::index, rotatedOffset.x, rotatedOffset.y, tmpx, tmpz, tmpyaw);
 
-					float* Correct_Par = new float[8];
-					float* rtOffset = new float[4];
-					rtOffset[0] = rotatedOffset.x;
-					rtOffset[1] = rotatedOffset.y;
-					rtOffset[2] = PillarVariables::worldCoor.z/10;
+				float* Correct_Par = new float[8];
+				float* rtOffset = new float[4];
+				rtOffset[0] = rotatedOffset.x;
+				rtOffset[1] = rotatedOffset.y;
+				rtOffset[2] = PillarVariables::worldCoor.z/10;
 
-					//cin >> rtOffset[0];
-					//cin >> rtOffset[1];
-					//cout << " 输入x偏差: " << rtOffset[0] << " 输入z偏差: " << rtOffset[1] << endl;
+				//cin >> rtOffset[0];
+				//cin >> rtOffset[1];
+				//cout << " 输入x偏差: " << rtOffset[0] << " 输入z偏差: " << rtOffset[1] << endl;
 
-					Correction::calculate2(PillarVariables::index, Correct_Par, rtOffset);
-					CorrectParam::assign(Correct_Par);
-					PillarVariables::correctedYaw[PillarVariables::index] += Correct_Par[3];
-					cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
-						Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
-# ifdef USESERIALPORT
-					try
-					{
-						//if(Correct_Par[3])
-							//rc17::Protocol::sendDataBySerialPort(Protocol::NoBallPara, (double)Correct_Par[1], (double)Correct_Par[2], (double)Correct_Par[3], -(double)Correct_Par[4], -(double)Correct_Par[5]);
-					}
-					catch(...)
-					{
-						cout << "send failed";
-					}
-					//rc17::Protocol::sendDataBySerialPort(tmpx, tmpz, tmpyaw);
-# endif
+				Correction::calculate2(PillarVariables::index, Correct_Par, rtOffset);
+				//CorrectParam::assign(Correct_Par);
+				Protocol::correctPara[PillarVariables::index].assign(Correct_Par);
+				PillarVariables::correctedYaw[PillarVariables::index] += Correct_Par[3];
+				cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
+					Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
 			}
 			else if (trackSuccess == 1)
 				datafile << "飞盘" << regionVector[i].getSaucerIndex() << "采集点太少或者是杂物" << endl;

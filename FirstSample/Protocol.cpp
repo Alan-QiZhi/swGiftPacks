@@ -32,6 +32,11 @@ void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, d
 
 }
 
+void rc17::Protocol::sendDataBySerialPort(int cmd, double yaw, DelayCorrectVariables correctPara)
+{
+	sendDataBySerialPort(cmd, correctPara.pitch, correctPara.roll, yaw, -correctPara.bigWheel, -correctPara.smallWheel);
+}
+
 void rc17::Protocol::sendDataForBall()
 {
 	unsigned char bytesToSend[16];
@@ -121,3 +126,13 @@ void rc17::Protocol::sendDataBySocket(double data1, double data2, double data3)
 
 	send(rc17::CommunicationVariables::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
 }
+
+void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)
+{
+	pitch = correctPara[1];
+	roll = correctPara[2];
+	bigWheel = correctPara[4];
+	smallWheel = correctPara[5];
+	haveData = true;
+}
+rc17::Protocol::DelayCorrectVariables rc17::Protocol::correctPara[7] = {};

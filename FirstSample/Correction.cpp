@@ -24,7 +24,7 @@
 *------------------------------------------*/
 
 static float Max_Value[7][10] = { { 0, 0, 0, 0, 8, -8 },
-{ 2, -2,  2, -2,   8,  -8,  50,  -50,  250,  -250 },
+{ 2, -2,  2, -2,   8,  -8,  100,  -100,  220,  -220 },
 { 3, -3,  4, -4,  10, -10,  30,  -30,  210,  -240 },
 { 0, 0, 0, 0,  8, -8  },
 { 0, 0, 0, 0,  8, -8  },
@@ -483,11 +483,11 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 				break;
 
 		case 1:
-				Speed1[0] = 15 ;	Speed1[1] = -45;		Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = -160;	Speed2[1] = 200;		Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] =0.3 ;	Pitch1[1] = -0.3;		Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0.7 ;	Roll1[1] = -0.3;		Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] =  1.24;	Yaw1[1] = -1.4;			Yaw1[2] = 0;		Yaw1[3] = 0;
+				Speed1[0] = 175 ;	Speed1[1] = -130;		Speed1[2] = 0;		Speed1[3] = 0;
+				Speed2[0] = -80;	Speed2[1] = 75;		    Speed2[2] = 0;		Speed2[3] = 0;
+				Pitch1[0] =-0.74 ;	Pitch1[1] = 1.27;		Pitch1[2] = 0;		Pitch1[3] = 0;
+				Roll1[0] = 0 ;	    Roll1[1] = 0;		    Roll1[2] = 0;		Roll1[3] = 0;
+				Yaw1[0] =  -4;	    Yaw1[1] = 3;			Yaw1[2] = 0;		Yaw1[3] = 0;
 				break;
 
 		case 2:

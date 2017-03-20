@@ -56,7 +56,7 @@ void rc17::Execute::run(HObject _depthImage)
 	{
 		saucerTrack();
 	}
-	//ThreadFlag::t_Flag = true;
+	//ThreadFlag::t_Num = true;
 }
 
 void rc17::Execute::initPos()

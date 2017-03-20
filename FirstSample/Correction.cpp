@@ -24,8 +24,8 @@
 *------------------------------------------*/
 
 static float Max_Value[7][10] = { { 0, 0, 0, 0, 8, -8 },
-{ 0, 0, 0, 0, 8, -8 },
-{ 3, -3,  4, -4,   8, -8 ,  30, -30, 210, -240 },
+{ 2, -2,  2, -2,   8,  -8,  50,  -50,  250,  -250 },
+{ 3, -3,  4, -4,  10, -10,  30,  -30,  210,  -240 },
 { 0, 0, 0, 0,  8, -8  },
 { 0, 0, 0, 0,  8, -8  },
 { 0, 0, 0, 0,  8, -8  },
@@ -483,11 +483,11 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 				break;
 
 		case 1:
-				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
+				Speed1[0] = 15 ;	Speed1[1] = -45;		Speed1[2] = 0;		Speed1[3] = 0;
+				Speed2[0] = -160;	Speed2[1] = 200;		Speed2[2] = 0;		Speed2[3] = 0;
+				Pitch1[0] =0.3 ;	Pitch1[1] = -0.3;		Pitch1[2] = 0;		Pitch1[3] = 0;
+				Roll1[0] = 0.7 ;	Roll1[1] = -0.3;		Roll1[2] = 0;		Roll1[3] = 0;
+				Yaw1[0] =  1.24;	Yaw1[1] = -1.4;			Yaw1[2] = 0;		Yaw1[3] = 0;
 				break;
 
 		case 2:
@@ -648,7 +648,7 @@ void Fliter_Output(float Correct_Par[])
 *		：错误为1
 		：Confidence_Limit 可信度的，另一个应用，来判断是否需要启动最优值
 *------------------------------------------*/
-void Check_CorrectPar(int Plane_Num, float Correct_Par[])
+void Check_CorrectPar(int Plane_Num, float Correct_Par[],float Ponit[] )
 {
 	int i;
 	int j;
@@ -685,17 +685,43 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[])
 	else
 	{
 		Correct_Par[0] = 0.3f;
-
-		for (j = 0; j < 5; j++)
+		
+		//-------对最优值进行判断，是否符合要求---------
+		if( Correct_BestDelta[0][1] < 32 )
 		{
-			Correct_Par[j+1] = -(Correct_DeltaAll[Plane_Num][j] - Correct_BestDelta[Plane_Num+1][j]);
-		}
-
-		for (j = 0; j < 5; j++)
+			for (j = 0; j < 5; j++)
+			{
+				Correct_Par[j+1] = -(Correct_DeltaAll[Plane_Num][j] - Correct_BestDelta[Plane_Num+1][j]);
+			}
+	
+			for (j = 0; j < 5; j++)
+			{
+				Correct_DeltaAll[Plane_Num][j] = Correct_BestDelta[Plane_Num + 1][j];
+			}
+		}else
 		{
-			Correct_DeltaAll[Plane_Num][j] = Correct_BestDelta[Plane_Num + 1][j];
+			//-----最优值清空，总修正量清空，回到之前比较好的一个状态-------
+			for (j = 0; j < 5; j++)	
+			{
+				Correct_Par[j+1] = -(Correct_DeltaAll[Plane_Num][j] - Correct_BestDelta[Plane_Num+1][j]);
+			}
+			
+			for (j = 0; j < 5; j++)
+			{
+				Correct_DeltaAll[Plane_Num][j] = 0;
+			}
+			
+			for (j = 0; j < 5; j++)
+			{
+				Correct_BestDelta[Plane_Num + 1][j] = 0;	
+			}
+			
+			//-----直接操控俯仰角进行变化-------
+			if ( Ponit[1] > 0 )
+				Correct_Par[1] = Correct_Par[1] - 2 ;
+			else
+				Correct_Par[1] = Correct_Par[1] + 2 ;
 		}
-
 	}
 }
 
@@ -851,7 +877,7 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 		/*Correction_Yaw(Plane_Num, Correct_Par, Point);*/
 	}
 
-	Check_CorrectPar(Plane_Num, Correct_Par);//---检测是否修正有错误并改到最优
+	Check_CorrectPar(Plane_Num, Correct_Par, Point);//---检测是否修正有错误并改到最优
 
 	Correct_Par[0] = Confidence_Percent;
 	Correct_Par[6] = Value_Corct[0];

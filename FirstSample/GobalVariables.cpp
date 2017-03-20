@@ -36,7 +36,7 @@ int const rc17::PillarVar::pillarLocCol[7]
 
 int const rc17::PillarVar::pillarBallCol[7]
 {
-	-128,243,264,260,265,285,274
+	-128,253,274,270,275,295,284
 };
 
 int const rc17::PillarVar::pillarLocRow[7]
@@ -52,5 +52,5 @@ double rc17::PillarVar::correctedYaw[7]
 rc17::MySerial rc17::ComVar::serialPort;
 rc17::SocketClient rc17::ComVar::mySocketClient;
 
-bool rc17::ThreadFlag::t_Flag = false;
+char rc17::ThreadFlag::t_Num = false;
 bool rc17::ThreadFlag::run = true;

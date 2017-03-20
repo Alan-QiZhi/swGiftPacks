@@ -208,7 +208,7 @@ bool rc17::PillarState::lockPillar(int type)
 
 	if (abs(pixelOffset) > thresL && abs(pixelOffset) < thresH)
 	{
-		double kP = 0.6;
+		double kP = 0.7;
 		double kI = 0.0;
 		double kD = 0;
 
@@ -216,48 +216,48 @@ bool rc17::PillarState::lockPillar(int type)
 		static int lastPixel = PillarVar::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
 		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVar::pixelCoor.column);
-		
+		cout << yawToFix << endl;
 		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		
-		if (Protocol::correctPara[PillarVar::index].haveData == true)//捎带发送上次修正值
+		if (Protocol::correctPara[PillarVar::index].haveDataNum != 0)//捎带发送上次修正值
 		{
-			if (abs(yawToFix) < 1)
-				if (yawToFix > 0)
-				{
-					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
-					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, -1.1, Protocol::correctPara[PillarVar::index]);
-				}
-				else
-				{
-					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
-					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVar::index]);
-				}
-			else
+			//if (abs(yawToFix) < 1)
+			//	if (yawToFix > 0)
+			//	{
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
+			//		this_thread::sleep_for(chrono::milliseconds(500));
+			//		Protocol::sendDataBySerialPort(cmd, -1.1, Protocol::correctPara[PillarVar::index]);
+			//	}
+			//	else
+			//	{
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
+			//		this_thread::sleep_for(chrono::milliseconds(500));
+			//		Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVar::index]);
+			//	}
+			//else
 				Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVar::index]);
-			Protocol::correctPara[PillarVar::index].haveData = false;
+			Protocol::correctPara[PillarVar::index].haveDataNum = 0;
 		}
 		else
 		{
-			if (abs(yawToFix) < 1)
-				if (yawToFix > 0)
-				{
-					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
-					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, 0, 0, -1.1, 0, 0);
-				}
-				else
-				{
-					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
-					this_thread::sleep_for(chrono::milliseconds(500));
-					Protocol::sendDataBySerialPort(cmd, 0, 0, 1.1, 0, 0);
-				}
+			//if (abs(yawToFix) < 1)
+			//	if (yawToFix > 0)
+			//	{
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
+			//		this_thread::sleep_for(chrono::milliseconds(500));
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, -1.1, 0, 0);
+			//	}
+			//	else
+			//	{
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
+			//		this_thread::sleep_for(chrono::milliseconds(500));
+			//		Protocol::sendDataBySerialPort(cmd, 0, 0, 1.1, 0, 0);
+			//	}
 
-			else
-			{
+			//else
+			//{
 				Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
-			}
+			//}
 		}
 #endif
 	}

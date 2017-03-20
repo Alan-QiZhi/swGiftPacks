@@ -13,7 +13,7 @@ namespace rc17
 			double roll;
 			double bigWheel;
 			double smallWheel;
-			bool haveData = false;
+			int haveDataNum = 0;
 			void assign(float* correctPara);
 		};
 	public :

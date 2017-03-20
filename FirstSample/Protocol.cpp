@@ -3,7 +3,7 @@
 
 void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
-	if (ThreadFlag::t_Flag == false)
+	if (ThreadFlag::t_Num == false)
 		return;
 	long tmp1 = data1 * 10, tmp2 = data2 * 10, tmp3 = data3 * 10,
 		tmp4 = data4, tmp5 = data5;
@@ -34,7 +34,7 @@ void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, d
 
 void rc17::Protocol::sendDataBySerialPort(int cmd, double yaw, DelayCorrectVariables correctPara)
 {
-	sendDataBySerialPort(cmd, correctPara.pitch, correctPara.roll, yaw, -correctPara.bigWheel, -correctPara.smallWheel);
+	sendDataBySerialPort(cmd, correctPara.pitch / correctPara.haveDataNum, correctPara.roll / correctPara.haveDataNum, yaw, -correctPara.bigWheel / correctPara.haveDataNum, -correctPara.smallWheel / correctPara.haveDataNum);
 }
 
 void rc17::Protocol::sendDataForBall()
@@ -65,7 +65,7 @@ void rc17::Protocol::sendDataForBall()
 
 void rc17::Protocol::sendCmd(int cmd)
 {
-	if (ThreadFlag::t_Flag == false)
+	if (ThreadFlag::t_Num == false)
 		return;
 	unsigned char bytesToSend[16];
 	bytesToSend[0] = 0xb6;
@@ -129,10 +129,21 @@ void rc17::Protocol::sendDataBySocket(double data1, double data2, double data3)
 
 void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)
 {
-	pitch = correctPara[1];
-	roll = correctPara[2];
-	bigWheel = correctPara[4];
-	smallWheel = correctPara[5];
-	haveData = true;
+	if (haveDataNum != 0)//防止未修正的值被直接覆盖
+	{
+		pitch = pitch + correctPara[1];
+		roll = roll + correctPara[2];
+		bigWheel = bigWheel + correctPara[4];
+		smallWheel = smallWheel + correctPara[5];
+		haveDataNum++;
+	}
+	else
+	{
+		pitch = correctPara[1];
+		roll = correctPara[2];
+		bigWheel = correctPara[4];
+		smallWheel = correctPara[5];
+		haveDataNum = 1;
+	}
 }
 rc17::Protocol::DelayCorrectVariables rc17::Protocol::correctPara[7] = {};

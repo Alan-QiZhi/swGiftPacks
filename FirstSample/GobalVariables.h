@@ -63,7 +63,7 @@ namespace rc17
 	class ThreadFlag
 	{
 	public:
-		static bool t_Flag;
+		static char t_Num;
 		static bool run;
 	};
 }

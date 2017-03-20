@@ -384,10 +384,8 @@ void rc17::MySerial::receive(const int data_len)
 						CameraVar::receiveAngle = (receData[6] * 256 + receData[7] - 10000) / 100.0;
 						if (receData[9] > 7) receData[9] = receData[9] - 7;
 						rc17::PillarVar::index = ((int)receData[9] - 1)>= 0? ((int)receData[9] - 1):0;
-						if (static_cast<int>(receData[10]) == 1)
-							ThreadFlag::t_Flag = true;
-						else if (static_cast<int>(receData[10]) == 0)
-							ThreadFlag::t_Flag = false;
+						ThreadFlag::t_Num = receData[10];
+
 						//TODO
 						//为了配合学姐测试。
 						//if (receData[9] == 1)

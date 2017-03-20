@@ -11,7 +11,7 @@ void rc17::Correct()
 	bool LastHadBall = false;
 	while(ThreadFlag::run)
 	{
-		if(ThreadFlag::t_Flag == true)
+		if(ThreadFlag::t_Num == true)
 		{
 			if (PillarState::hasBall() == true)
 			{
@@ -23,16 +23,19 @@ void rc17::Correct()
 				readyToShoot = PillarState::lockPillar(PillarState::NoBall);
 			}
 
-			if (readyToShoot == true)//发射状态
+			if (readyToShoot == true && ThreadFlag::t_Num != 2)//发射状态,非云台调整状态
 			{
 				if (PillarState::hasBall() == true)
 					Protocol::sendCmd(Protocol::BallPara);
 				else
 					Protocol::sendCmd(Protocol::NoBallPara);
 				this_thread::sleep_for(chrono::milliseconds(50));
-
 				Protocol::sendCmd(Protocol::Shoot);
-				this_thread::sleep_for(chrono::milliseconds(1500));//等一发飞盘发射完毕
+
+				if (PillarState::hasBall() == true)
+					this_thread::sleep_for(chrono::milliseconds(2000));//打球的延时大一些
+				else
+					this_thread::sleep_for(chrono::milliseconds(1300));//等一发飞盘发射完毕
 				continue;
 			}
 		}

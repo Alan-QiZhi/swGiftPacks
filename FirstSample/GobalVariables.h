@@ -14,16 +14,16 @@ using namespace std;
 //#define USESOCKET
 namespace rc17
 {
-	class HalconVariables
+	class HalconVar
 	{
 	public:
-		static HalconCpp::HTuple hv_WindowHandle;
+		static HTuple hv_WindowHandle;
 	};
 
-	class CameraVariables
+	class CameraVar
 	{
 	public:
-		static HalconCpp::HObject depthImage;
+		static HObject depthImage;
 		static CameraParam cameraParam;
 		static Coor3D cameraOffset;
 
@@ -35,7 +35,7 @@ namespace rc17
 		static Coor3D getWorldCoor(double _row, double _column);
 	};
 
-	class PillarVariables
+	class PillarVar
 	{
 	public:
 		static Coor3D worldCoor;
@@ -53,7 +53,7 @@ namespace rc17
 		static double correctedYaw[7];
 	};
 
-	class CommunicationVariables
+	class ComVar
 	{
 	public:
 		static MySerial serialPort;
@@ -65,17 +65,6 @@ namespace rc17
 	public:
 		static bool t_Flag;
 		static bool run;
-	};
-
-	class CorrectParam
-	{
-	public:
-		static double pitch;
-		static double roll;
-		static double bigWheel;
-		static double smallWheel;
-		static bool update;
-		static void assign(float* correctPara);
 	};
 }
 

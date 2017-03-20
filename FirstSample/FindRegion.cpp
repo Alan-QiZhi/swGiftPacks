@@ -51,10 +51,10 @@ HTuple rc17::FindRegion::fillUpRegionHasFound(HObject &Image, HObject &Region)
 
 		HObject RectSB;
 		GenRectangle2(&RectSB, R, C, 0, 4, 4);
-		SetColor(HalconVariables::hv_WindowHandle, "blue");
+		SetColor(HalconVar::hv_WindowHandle, "blue");
 		if (HDevWindowStack::IsOpen())
 			DispObj(RectSB, HDevWindowStack::GetActive());
-		SetColor(HalconVariables::hv_WindowHandle, "red");
+		SetColor(HalconVar::hv_WindowHandle, "red");
 
 		//findRegion(Image, &Region, R, C, 500);
 		//AreaCenter(Region, &A, &R, &C);
@@ -204,7 +204,7 @@ int rc17::FindRegion::getOffset(double offset[2])
 
 	for (; lastCoorIndex > 0; lastCoorIndex--)
 	{
-		if (regionTrack[lastCoorIndex].y < PillarVariables::worldCoor.y - HEIGHTFILTRE && regionTrack[lastCoorIndex].z < PillarVariables::worldCoor.z + ZFILTER /*&& abs(regionTrack[lastCoorIndex].x - CameraVariables::pillarcoor.x ) < 300*/)
+		if (regionTrack[lastCoorIndex].y < PillarVar::worldCoor.y - HEIGHTFILTRE && regionTrack[lastCoorIndex].z < PillarVar::worldCoor.z + ZFILTER /*&& abs(regionTrack[lastCoorIndex].x - CameraVar::pillarcoor.x ) < 300*/)
 		{
 			// 保证使用的点的z大于上一帧的z
 			if(regionTrack[lastCoorIndex].z > regionTrack[lastCoorIndex - 1].z)
@@ -216,7 +216,7 @@ int rc17::FindRegion::getOffset(double offset[2])
 	//如果追踪点的数量太少 或者追踪的region过早丢失
 	if (lastCoorIndex < 2)
 		return 1;
-	else if (PillarVariables::worldCoor.z - regionTrack[lastCoorIndex].z > 1000 || PillarVariables::worldCoor.y - regionTrack[lastCoorIndex].y > 10000)
+	else if (PillarVar::worldCoor.z - regionTrack[lastCoorIndex].z > 1000 || PillarVar::worldCoor.y - regionTrack[lastCoorIndex].y > 10000)
 		return 2;
 
 
@@ -248,13 +248,13 @@ int rc17::FindRegion::getOffset(double offset[2])
 	}
 	double ratio = tan((atan(ratioThree[0]) + atan(ratioThree[1]) + atan(ratioThree[2])) / 3);
 	intersectionCoor.x = regionTrack[lastCoorIndex].x + (regionTrack[index0].y - regionTrack[index1].y) * ratio;
-	intersectionCoor.y = PillarVariables::worldCoor.y;
+	intersectionCoor.y = PillarVar::worldCoor.y;
 	intersectionCoor.z = regionTrack[lastCoorIndex].z + (regionTrack[index0].y - regionTrack[index1].y) * ratio;
 
 	if (regionTrack[lastCoorIndex].z > 6000)
 	{
 		double k = 0.0013333;
-		double deltaZ = -k / 2 * (PillarVariables::worldCoor.y*PillarVariables::worldCoor.y - regionTrack[lastCoorIndex - 2].y*regionTrack[lastCoorIndex - 2].y) + (1500 * k + 2)*(PillarVariables::worldCoor.y - regionTrack[lastCoorIndex - 2].y);
+		double deltaZ = -k / 2 * (PillarVar::worldCoor.y*PillarVar::worldCoor.y - regionTrack[lastCoorIndex - 2].y*regionTrack[lastCoorIndex - 2].y) + (1500 * k + 2)*(PillarVar::worldCoor.y - regionTrack[lastCoorIndex - 2].y);
 		intersectionCoor.z = regionTrack[lastCoorIndex - 2].z + deltaZ;
 	}
 
@@ -262,18 +262,18 @@ int rc17::FindRegion::getOffset(double offset[2])
 	//{
 	//	double k = 620;
 	//	double b = 1.43;
-	//	double deltaZ = k*(log(PillarVariables::worldCoor.y) - log(regionTrack[lastCoorIndex].y)) + b*(PillarVariables::worldCoor.y - regionTrack[lastCoorIndex].y);
+	//	double deltaZ = k*(log(PillarVar::worldCoor.y) - log(regionTrack[lastCoorIndex].y)) + b*(PillarVar::worldCoor.y - regionTrack[lastCoorIndex].y);
 	//	intersectionCoor.z = regionTrack[lastCoorIndex].z + deltaZ;
 	//}
-	offset[0] = intersectionCoor.x - PillarVariables::worldCoor.x;
+	offset[0] = intersectionCoor.x - PillarVar::worldCoor.x;
 	//因为柱子有厚度 加100
-	offset[1] = intersectionCoor.z - PillarVariables::worldCoor.z - 100;
+	offset[1] = intersectionCoor.z - PillarVar::worldCoor.z - 100;
 
 
 	std::ofstream datafile;
 	datafile.open("C:\\Users\\robocon2017\\Desktop\\datafile.txt", std::ios::app);
 	datafile << "使用了倒数第" << regionTrack.size() - lastCoorIndex << " 个数据" << endl;
-	datafile << "柱子坐标 X：" << PillarVariables::worldCoor.x << "  Y：" << PillarVariables::worldCoor.y << "  Z：" << PillarVariables::worldCoor.z << endl;
+	datafile << "柱子坐标 X：" << PillarVar::worldCoor.x << "  Y：" << PillarVar::worldCoor.y << "  Z：" << PillarVar::worldCoor.z << endl;
 	datafile.close();
 	return 0;
 }

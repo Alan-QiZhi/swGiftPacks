@@ -35,21 +35,21 @@ bool rc17::Execute::init()
 
 void rc17::Execute::run(HObject _depthImage)
 {
-	CameraVariables::depthImage = _depthImage;
+	CameraVar::depthImage = _depthImage;
 	//writeImage(700);
 	if (HDevWindowStack::IsOpen())
-		DispObj(CameraVariables::depthImage, HDevWindowStack::GetActive());
+		DispObj(CameraVar::depthImage, HDevWindowStack::GetActive());
 
 	//设置摄像头位置参数
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
-	PillarVariables::pixelCoor = PillarState::getPillarPixel();
-	//cout << PillarVariables::pixelCoor.row << "   " << PillarVariables::pixelCoor.column << endl;
+	PillarVar::pixelCoor = PillarState::getPillarPixel();
+	//cout << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column << endl;
 
 	//获得柱子的世界坐标
-	if (PillarVariables::pixelCoor.row > 0 && PillarVariables::pixelCoor.column > 0) {
-		PillarVariables::worldCoor = CameraVariables::getWorldCoor(PillarVariables::pixelCoor.row, PillarVariables::pixelCoor.column);
-		//cout << "worldCoorZ: " << PillarVariables::worldCoor.z << endl;
+	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) {
+		PillarVar::worldCoor = CameraVar::getWorldCoor(PillarVar::pixelCoor.row, PillarVar::pixelCoor.column);
+		//cout << "worldCoorZ: " << PillarVar::worldCoor.z << endl;
 	}
 	//追踪飞盘(没有球的时候)
 	if (PillarState::hasBall() == false)
@@ -62,12 +62,12 @@ void rc17::Execute::run(HObject _depthImage)
 void rc17::Execute::initPos()
 {
 #ifdef REDTEAM
-	CameraVariables::cameraOffset.x = 359.10;
-	CameraVariables::cameraOffset.y = 315.73;
+	CameraVar::cameraOffset.x = 359.10;
+	CameraVar::cameraOffset.y = 315.73;
 #endif
 #ifdef BLUETEAM
-	CameraVariables::cameraOffset.x = -359.10;
-	CameraVariables::cameraOffset.y = 315.73;
+	CameraVar::cameraOffset.x = -359.10;
+	CameraVar::cameraOffset.y = 315.73;
 #endif
 }
 
@@ -83,15 +83,15 @@ void rc17::Execute::initHWindow()
 
 	// Local control variables
 	SetWindowAttr("background_color", "black");
-	OpenWindow(0, 0, 640, 480, 0, "", "", &HalconVariables::hv_WindowHandle);
-	HDevWindowStack::Push(HalconVariables::hv_WindowHandle);
-	SetPart(HalconVariables::hv_WindowHandle, 0, 0, 480, 640);
+	OpenWindow(0, 0, 640, 480, 0, "", "", &HalconVar::hv_WindowHandle);
+	HDevWindowStack::Push(HalconVar::hv_WindowHandle);
+	SetPart(HalconVar::hv_WindowHandle, 0, 0, 480, 640);
 }
 
 void rc17::Execute::initSerialPort()
 {
-	CommunicationVariables::serialPort.auto_open();
-	CommunicationVariables::serialPort.openListenThread();
+	ComVar::serialPort.auto_open();
+	ComVar::serialPort.openListenThread();
 	//Sleep(1000);
 	//Protocol::sendCmd(Protocol::Shoot);
 	//Protocol::sendDataBySerialPort(Protocol::NoBallPara, 0, 0, 0.5 + 1, 0, 0);
@@ -105,41 +105,41 @@ void rc17::Execute::initSerialPort()
 
 void rc17::Execute::initSocket()
 {
-	CommunicationVariables::mySocketClient.init();
+	ComVar::mySocketClient.init();
 }
 
 void rc17::Execute::setCameraParam()
 {
 #ifdef REDTEAM
-	CameraVariables::cameraParam.worldX = CameraVariables::receiveX +
-		CoorTransform::rotateVector(CameraVariables::cameraOffset, -CameraVariables::receiveAngle).x;
+	CameraVar::cameraParam.worldX = CameraVar::receiveX +
+		CoorTransform::rotateVector(CameraVar::cameraOffset, -CameraVar::receiveAngle).x;
 	//receiveX + 摄像头偏移车坐标点 + woc好像还要坐标换算。。。
-	CameraVariables::cameraParam.worldY = CameraVariables::receiveY +
-		CoorTransform::rotateVector(CameraVariables::cameraOffset, -CameraVariables::receiveAngle).y;
+	CameraVar::cameraParam.worldY = CameraVar::receiveY +
+		CoorTransform::rotateVector(CameraVar::cameraOffset, -CameraVar::receiveAngle).y;
 	//receiveY + 摄像头偏移车坐标点 +
-	CameraVariables::cameraParam.yaw = CameraVariables::receiveAngle + CAMERAROTATE;
+	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CAMERAROTATE;
 #endif
 #ifdef BLUETEAM
-	CameraVariables::cameraParam.worldX = -CameraVariables::receiveX +
-		CoorTransform::rotateVector(CameraVariables::cameraOffset, -CameraVariables::receiveAngle).x;
+	CameraVar::cameraParam.worldX = -CameraVar::receiveX +
+		CoorTransform::rotateVector(CameraVar::cameraOffset, -CameraVar::receiveAngle).x;
 	//receiveX + 摄像头偏移车坐标点 + woc好像还要坐标换算。。。
-	CameraVariables::cameraParam.worldY = CameraVariables::receiveY +
-		CoorTransform::rotateVector(CameraVariables::cameraOffset, -CameraVariables::receiveAngle).y;
+	CameraVar::cameraParam.worldY = CameraVar::receiveY +
+		CoorTransform::rotateVector(CameraVar::cameraOffset, -CameraVar::receiveAngle).y;
 	//receiveY + 摄像头偏移车坐标点 +
-	CameraVariables::cameraParam.yaw = CameraVariables::receiveAngle + CameraVariables::cameraRotate;
+	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 
-	//CameraVariables::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).x;
-	//CameraVariables::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVariables::cameraOffset, -(8)).y;
-	//CameraVariables::cameraParam.yaw = 0 + CAMERAROTATE;
+	//CameraVar::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
+	//CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
+	//CameraVar::cameraParam.yaw = 0 + CAMERAROTATE;
 
-	CameraVariables::cameraParam.worldZ = 728;
-	CameraVariables::cameraParam.pitch = 16.3;
+	CameraVar::cameraParam.worldZ = 728;
+	CameraVar::cameraParam.pitch = 16.3;
 }
 
 void rc17::Execute::getPillarCoor()
 {
-	PillarVariables::worldCoor = PillarState::getPillarCoor();
+	PillarVar::worldCoor = PillarState::getPillarCoor();
 }
 
 void rc17::Execute::saucerTrack()
@@ -151,7 +151,7 @@ void rc17::Execute::saucerTrack()
 	//存储找到的region
 	try
 	{
-		regionsFound = RegionDetector::RegionsFound(CameraVariables::depthImage);
+		regionsFound = RegionDetector::RegionsFound(CameraVar::depthImage);
 	}
 	catch (...)
 	{
@@ -169,8 +169,8 @@ void rc17::Execute::saucerTrack()
 					DispObj(regionsFound[i], HDevWindowStack::GetActive());
 				AreaCenter(regionsFound[i], &hv_SaucerArea, &hv_SaucerRow, &hv_SaucerColumn);
 				Coor3D SaucerCoorTwo[2];
-				SaucerCoorTwo[0] = CameraVariables::getWorldCoor((int)hv_SaucerRow.D(), (int)hv_SaucerColumn.D() + 1);
-				SaucerCoorTwo[1] = CameraVariables::getWorldCoor((int)hv_SaucerRow.D(), (int)hv_SaucerColumn.D() - 1);
+				SaucerCoorTwo[0] = CameraVar::getWorldCoor((int)hv_SaucerRow.D(), (int)hv_SaucerColumn.D() + 1);
+				SaucerCoorTwo[1] = CameraVar::getWorldCoor((int)hv_SaucerRow.D(), (int)hv_SaucerColumn.D() - 1);
 				Coor3D SaucerCoordinate = Coor3D();
 				SaucerCoordinate.x = (SaucerCoorTwo[0].x + SaucerCoorTwo[1].x) / 2;
 				SaucerCoordinate.y = (SaucerCoorTwo[0].y + SaucerCoorTwo[1].y) / 2;

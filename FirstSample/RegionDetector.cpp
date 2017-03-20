@@ -28,14 +28,14 @@ void rc17::RegionDetector::detectRegion()
 	int DETECTMINLIMIT = 1800;
 	int DETECTMAXLIMIT = 3500;
 
-	SetColor(HalconVariables::hv_WindowHandle, "red");
+	SetColor(HalconVar::hv_WindowHandle, "red");
 	HObject ho_ROI_0, ho_ImageReduced, ho_Region, ho_ConnectedRegions, ho_SelectedRegions, ho_RegionUnion;
 	GenEmptyRegion(&ho_RegionUnion);
 	HTuple regionNum, hv_Area, hv_Row, hv_Column, hv_Grayval;
 
 
 	GenRectangle1(&ho_ROI_0, 0, 0, 478.5, 637.5);
-	ReduceDomain(CameraVariables::depthImage, ho_ROI_0, &ho_ImageReduced);
+	ReduceDomain(CameraVar::depthImage, ho_ROI_0, &ho_ImageReduced);
 
 	Threshold(ho_ImageReduced, &ho_Region, DETECTMINLIMIT, DETECTMAXLIMIT);
 	Connection(ho_Region, &ho_ConnectedRegions);
@@ -47,12 +47,12 @@ void rc17::RegionDetector::detectRegion()
 	{
 		HTuple hv_Deviation;
 		AreaCenter(ho_SelectedRegions[i], &hv_Area, &hv_Row, &hv_Column);
-		HalconCpp::Intensity(ho_SelectedRegions[i], CameraVariables::depthImage, &hv_Grayval, &hv_Deviation);
+		HalconCpp::Intensity(ho_SelectedRegions[i], CameraVar::depthImage, &hv_Grayval, &hv_Deviation);
 		if (hv_Grayval.D()>0 && hv_Grayval.D() < 65535)
 		{
 			Union2(ho_SelectedRegions[i], ho_RegionUnion, &ho_RegionUnion);
 #ifdef NEWMETHOD
-			pushRegionToFind(hv_Row, hv_Column, hv_Area, hv_Grayval, rc17::CameraVariables::cameraParam);
+			pushRegionToFind(hv_Row, hv_Column, hv_Area, hv_Grayval, rc17::CameraVar::cameraParam);
 #else
 			pushRegionToFind(hv_Row, hv_Column, hv_Area, hv_Grayval);
 #endif
@@ -88,7 +88,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 			if (i < regionVector.size())
 			{
 #ifdef NEWMETHOD
-				tmpObj = regionVector[i].findNext(Image, rc17::CameraVariables::cameraParam);
+				tmpObj = regionVector[i].findNext(Image, rc17::CameraVar::cameraParam);
 #else
 				tmpObj = regionVector[i].findNext(Image);
 #endif
@@ -134,7 +134,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				datafile << "·ÉÅÌ" << regionVector[i].getSaucerIndex() << " xÆ«²î: " << setw(2) << offset[0] << " zÆ«²î: " << setw(2) << offset[1] << endl;
 				cout << " xÆ«²î: " << setw(2) << offset[0] << " zÆ«²î: " << setw(2) << offset[1] << endl;
 # ifdef USESOCKET
-				rc17::CommunicationVariables::mySocketClient.connectAndSendOffset(PillarIndex(rc17::PillarVariables::index), (int)offset[0], (int)offset[1]);
+				rc17::ComVar::mySocketClient.connectAndSendOffset(PillarIndex(rc17::PillarVar::index), (int)offset[0], (int)offset[1]);
 				Coor3D tmpOffset, rotatedOffset;
 				
 				tmpOffset.x = offset[0];
@@ -148,14 +148,14 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				cout << "0:" << rotatedOffsetA[0] << "  1:" << rotatedOffsetA[1] << endl;
 				long tmpx = 0, tmpz = 0, tmpyaw = 0;
 
-				int method = rc17::Correction::Judge_Method(rc17::PillarVariables::index + 1, rotatedOffsetA);
+				int method = rc17::Correction::Judge_Method(rc17::PillarVar::index + 1, rotatedOffsetA);
 				if (method == 1)
 				{
 					double Par_Input[5] = { 0 };
 					double Par_Output[4] = { 0 };
 					Par_Input[0] = rotatedOffsetA[0];
 					Par_Input[1] = rotatedOffsetA[1];
-					rc17::Correction::Yaw_Correct(rc17::PillarVariables::index + 1, Par_Input, Par_Output);
+					rc17::Correction::Yaw_Correct(rc17::PillarVar::index + 1, Par_Input, Par_Output);
 					Par_Input[2] = Par_Output[3];
 					Par_Input[3] = Par_Output[1];
 					Par_Input[4] = Par_Output[2];
@@ -178,27 +178,27 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				tmpOffset.x = offset[0];
 				tmpOffset.y = offset[1];
 					
-				rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CameraVariables::cameraRotate);
+				rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CameraVar::cameraRotate);
 				cout << " xÆ«²î: " << setw(2) << rotatedOffset.x << " zÆ«²î: " << setw(2) << rotatedOffset.y << endl;
 				//Ðý×ªµ½ÔÆÌ¨·½ÏòÆ«²î
 
 				//double tmpx, tmpz, tmpyaw;
-				//rc17::Correction::calculate(rc17::PillarVariables::index, rotatedOffset.x, rotatedOffset.y, tmpx, tmpz, tmpyaw);
+				//rc17::Correction::calculate(rc17::PillarVar::index, rotatedOffset.x, rotatedOffset.y, tmpx, tmpz, tmpyaw);
 
 				float* Correct_Par = new float[8];
 				float* rtOffset = new float[4];
 				rtOffset[0] = rotatedOffset.x;
 				rtOffset[1] = rotatedOffset.y;
-				rtOffset[2] = PillarVariables::worldCoor.z/10;
+				rtOffset[2] = PillarVar::worldCoor.z/10;
 
 				//cin >> rtOffset[0];
 				//cin >> rtOffset[1];
 				//cout << " ÊäÈëxÆ«²î: " << rtOffset[0] << " ÊäÈëzÆ«²î: " << rtOffset[1] << endl;
 
-				Correction::calculate2(PillarVariables::index, Correct_Par, rtOffset);
+				Correction::calculate2(PillarVar::index, Correct_Par, rtOffset);
 				//CorrectParam::assign(Correct_Par);
-				Protocol::correctPara[PillarVariables::index].assign(Correct_Par);
-				PillarVariables::correctedYaw[PillarVariables::index] += Correct_Par[3];
+				Protocol::correctPara[PillarVar::index].assign(Correct_Par);
+				PillarVar::correctedYaw[PillarVar::index] += Correct_Par[3];
 				cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
 					Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
 			}

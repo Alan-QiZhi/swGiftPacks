@@ -53,11 +53,11 @@ void rc17::writeImage(int count)
 		hv_ImageCount = hv_ImageCount + 1;
 		if (hv_ImageCount.D() < count)
 		{
-			WriteImage(CameraVariables::depthImage, "tiff", 0, "C:/Users/robocon2017/Desktop/2/depth" + hv_ImageCount);
+			WriteImage(CameraVar::depthImage, "tiff", 0, "C:/Users/robocon2017/Desktop/2/depth" + hv_ImageCount);
 		}
 	}
 	else
 	{
-		WriteImage(CameraVariables::depthImage, "tiff", 0, "C:/Users/robocon2017/Desktop/2/depth" + hv_ImageCount);
+		WriteImage(CameraVar::depthImage, "tiff", 0, "C:/Users/robocon2017/Desktop/2/depth" + hv_ImageCount);
 	}
 }

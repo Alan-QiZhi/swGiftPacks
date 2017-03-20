@@ -232,7 +232,7 @@ bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 		rc17::ThreadFlag::run = true;
 		try
 		{
-			GetMposition(rc17::HalconVariables::hv_WindowHandle, &hv_Row, &hv_Column, &hv_Button);
+			GetMposition(rc17::HalconVar::hv_WindowHandle, &hv_Row, &hv_Column, &hv_Button);
 			GetGrayval(depthImage, hv_Row, hv_Column, &hv_Grayval);
 			//myCoor3D *p3DCoordinate = (myCoor3D*) depthData + (int)hv_Row.D() * width + (int)hv_Column.D();
 

@@ -83,7 +83,7 @@ rc17::Coor3D rc17::PillarState::getPillarCoor()
 # endif
 	if(pillarPixel.row == -1)
 		return Coor3D::empty();
-	Coor3D pillarCoor = CameraVariables::getWorldCoor(pillarPixel.row, pillarPixel.column);
+	Coor3D pillarCoor = CameraVar::getWorldCoor(pillarPixel.row, pillarPixel.column);
 	//中值滤波
 	pillarCoor = middleFilter(pillarCoor);
 	return pillarCoor;
@@ -91,13 +91,13 @@ rc17::Coor3D rc17::PillarState::getPillarCoor()
 
 rc17::Coor2D rc17::PillarState::getPillarPixel()
 {
-	Coor3D calculateCoor = CoorTransform::worldToCamera(CameraVariables::cameraParam, pillarWorldCoor[PillarVariables::index]);
+	Coor3D calculateCoor = CoorTransform::worldToCamera(CameraVar::cameraParam, pillarWorldCoor[PillarVar::index]);
 
 	double pillarRow, pillarColumn;
 	bool notBeyond = CoorTransform::cameraToPixel(calculateCoor, pillarRow, pillarColumn);
 
 #ifdef DEBUG
-	SetColor(HalconVariables::hv_WindowHandle, "red");
+	SetColor(HalconVar::hv_WindowHandle, "red");
 	HObject RectSB;
 	GenRectangle2(&RectSB, pillarRow, pillarColumn, 0, 4, 4);
 	if (HDevWindowStack::IsOpen())
@@ -115,7 +115,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 		HObject pillarRect;
 		GenRectangle1(&pillarRect, (HTuple)rowStart, (HTuple)columnStart, (HTuple)rowEnd, (HTuple)columnEnd);
 		HObject pillarImage;
-		ReduceDomain(CameraVariables::depthImage, pillarRect, &pillarImage);
+		ReduceDomain(CameraVar::depthImage, pillarRect, &pillarImage);
 		HObject pillarRegion;
 		//防止越界
 		int low = calculateCoor.z - 800 > 0 ? calculateCoor.z - 800 : 0;
@@ -138,10 +138,10 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 		HTuple row, column;
 		GetRegionPoints(ho_SelectedRegions, &row, &column);	
 		HObject plRegion;
-		findRegion(CameraVariables::depthImage, &plRegion, row[0], column[0], 1000);
+		findRegion(CameraVar::depthImage, &plRegion, row[0], column[0], 1000);
 
 #ifdef DEBUG
-		SetColor(HalconVariables::hv_WindowHandle, "green");
+		SetColor(HalconVar::hv_WindowHandle, "green");
 		
 #endif
 
@@ -153,7 +153,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 		GenRectangle1(&ho_Rectangle, HTuple(hv_Value[0]), HTuple(hv_Value[1]) - 50, 480,
 			HTuple(hv_Value[1]) + 50);
 		HObject ho_ImageReduced;
-		ReduceDomain(CameraVariables::depthImage, ho_Rectangle, &ho_ImageReduced);
+		ReduceDomain(CameraVar::depthImage, ho_Rectangle, &ho_ImageReduced);
 		HObject ho_PillarPart;
 		Threshold(ho_ImageReduced, &ho_PillarPart, (HTuple)(calculateCoor.z - 800), (HTuple)(calculateCoor.z + 800));
 		if (HDevWindowStack::IsOpen())
@@ -166,7 +166,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 		pillarPixel.row = static_cast<int>(hv_Value[2].D() + 10) < 480 ? static_cast<int>(hv_Value[2].D() + 10) : 480;
 
 #ifdef DEBUG
-		SetColor(HalconVariables::hv_WindowHandle, "red");
+		SetColor(HalconVar::hv_WindowHandle, "red");
 		HObject RectDSB;
 		GenRectangle2(&RectDSB, pillarPixel.row, pillarPixel.column, 0, 4, 4);
 		if (HDevWindowStack::IsOpen())
@@ -188,15 +188,15 @@ bool rc17::PillarState::lockPillar(int type)
 	{
 	case WithBall:
 	{
-		pixelOffset = PillarVariables::pillarBallCol[PillarIndex(PillarVariables::index)]
-			- PillarVariables::pixelCoor.column;
+		pixelOffset = PillarVar::pillarBallCol[PillarIndex(PillarVar::index)]
+			- PillarVar::pixelCoor.column;
 		cmd = Protocol::BallPara;
 		break;
 	}
 	case NoBall:
 	{
-		pixelOffset = PillarVariables::pillarLocCol[PillarIndex(PillarVariables::index)]
-			- PillarVariables::pixelCoor.column + PillarVariables::correctedYaw[PillarVariables::index]/57.0*640;
+		pixelOffset = PillarVar::pillarLocCol[PillarIndex(PillarVar::index)]
+			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[PillarVar::index]/57.0*640;
 		cmd = Protocol::NoBallPara;
 		break;
 	}
@@ -213,34 +213,30 @@ bool rc17::PillarState::lockPillar(int type)
 		double kD = 0;
 
 		static int pixelOffsetSum = 0;
-		static int lastPixel = PillarVariables::pixelCoor.column;
+		static int lastPixel = PillarVar::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
-		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVariables::pixelCoor.column);
+		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVar::pixelCoor.column);
 		
-		lastPixel = PillarVariables::pixelCoor.column;
+		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		
-		if (CorrectParam::update == true)//捎带发送上次修正值
+		if (Protocol::correctPara[PillarVar::index].haveData == true)//捎带发送上次修正值
 		{
 			if (abs(yawToFix) < 1)
 				if (yawToFix > 0)
 				{
 					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
 					this_thread::sleep_for(chrono::milliseconds(500));
-					//Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, -1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
-					Protocol::sendDataBySerialPort(cmd, -1.1, Protocol::correctPara[PillarVariables::index]);
+					Protocol::sendDataBySerialPort(cmd, -1.1, Protocol::correctPara[PillarVar::index]);
 				}
 				else
 				{
 					Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
 					this_thread::sleep_for(chrono::milliseconds(500));
-					//Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, 1.1, CorrectParam::bigWheel, -CorrectParam::smallWheel);
-					Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVariables::index]);
+					Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVar::index]);
 				}
 			else
-				//Protocol::sendDataBySerialPort(cmd, CorrectParam::pitch, CorrectParam::roll, yawToFix, 
-				//	CorrectParam::bigWheel, -CorrectParam::smallWheel);
-				Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVariables::index]);
-			CorrectParam::update = false;
+				Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVar::index]);
+			Protocol::correctPara[PillarVar::index].haveData = false;
 		}
 		else
 		{
@@ -273,7 +269,7 @@ bool rc17::PillarState::lockPillar(int type)
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	if(PillarVariables::pillarLocRow[PillarIndex(PillarVariables::index)] - PillarVariables::pixelCoor.row > thresBall)
+	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
 		return true;	
 	return false;
 }

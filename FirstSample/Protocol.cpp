@@ -25,8 +25,8 @@ void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, d
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;
 	
-	if (CommunicationVariables::serialPort.isOpened())
-		CommunicationVariables::serialPort.send(bytesToSend, 16);
+	if (ComVar::serialPort.isOpened())
+		ComVar::serialPort.send(bytesToSend, 16);
 	else
 		throw exception("串口未打开！");
 
@@ -57,8 +57,8 @@ void rc17::Protocol::sendDataForBall()
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;
 
-	if (CommunicationVariables::serialPort.isOpened())
-		CommunicationVariables::serialPort.send(bytesToSend, 16);
+	if (ComVar::serialPort.isOpened())
+		ComVar::serialPort.send(bytesToSend, 16);
 	else
 		throw exception("串口未打开！");
 }
@@ -85,8 +85,8 @@ void rc17::Protocol::sendCmd(int cmd)
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;
 
-	if (CommunicationVariables::serialPort.isOpened())
-		CommunicationVariables::serialPort.send(bytesToSend, 16);
+	if (ComVar::serialPort.isOpened())
+		ComVar::serialPort.send(bytesToSend, 16);
 	else
 		throw exception("串口未打开！");
 }
@@ -106,7 +106,7 @@ void rc17::Protocol::sendDataBySocket(long data1, long data2, long data3)
 	bytesToSend[10] = 0xbe;
 	bytesToSend[11] = 0xa9;
 
-	send(rc17::CommunicationVariables::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
+	send(rc17::ComVar::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
 }
 
 void rc17::Protocol::sendDataBySocket(double data1, double data2, double data3)
@@ -124,7 +124,7 @@ void rc17::Protocol::sendDataBySocket(double data1, double data2, double data3)
 	bytesToSend[10] = 0xbe;
 	bytesToSend[11] = 0xa9;
 
-	send(rc17::CommunicationVariables::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
+	send(rc17::ComVar::mySocketClient.get(), reinterpret_cast<const char *>(bytesToSend), 12, 0);
 }
 
 void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)

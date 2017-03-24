@@ -8,7 +8,7 @@
 #include "Execute.h"
 #include "Task.h"
 // 宏定义
-//
+////
 //摄像头宏定义
 #if defined (_MSC_VER) && defined (_WIN32)
 // You have to delay load the GenApi libraries used for configuring the camera device.

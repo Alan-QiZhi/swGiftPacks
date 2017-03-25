@@ -26,9 +26,9 @@ namespace rc17
 			NoBall
 		};
 		static Coor3D getPillarCoor();
-		static Coor2D getPillarPixel();
+		static Coor2D getPillarPixel(int index);
 		static bool lockPillar(int type);
-		static bool hasBall();
+		static bool hasBall(int index);
 	private:
 		static const Coor3D pillarWorldCoor[7];
 		static Coor3D middleFilter(Coor3D pillarCoor);

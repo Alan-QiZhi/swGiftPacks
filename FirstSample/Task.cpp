@@ -13,7 +13,7 @@ void rc17::Correct()
 	{
 		if(ThreadFlag::t_Num == true)
 		{
-			if (PillarState::hasBall() == true)
+			if (PillarState::hasBall(PillarVar::index) == true)
 			{
 				cout << "ball" << endl;
 				readyToShoot = PillarState::lockPillar(PillarState::WithBall);
@@ -25,14 +25,14 @@ void rc17::Correct()
 
 			if (readyToShoot == true && ThreadFlag::t_Num != 2)//发射状态,非云台调整状态
 			{
-				if (PillarState::hasBall() == true)
+				if (PillarState::hasBall(PillarVar::index) == true)
 					Protocol::sendCmd(Protocol::BallPara);
 				else
 					Protocol::sendCmd(Protocol::NoBallPara);
 				this_thread::sleep_for(chrono::milliseconds(50));
 				Protocol::sendCmd(Protocol::Shoot);
 
-				if (PillarState::hasBall() == true)
+				if (PillarState::hasBall(PillarVar::index) == true)
 					this_thread::sleep_for(chrono::milliseconds(2000));//打球的延时大一些
 				else
 					this_thread::sleep_for(chrono::milliseconds(1300));//等一发飞盘发射完毕

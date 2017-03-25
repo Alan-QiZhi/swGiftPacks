@@ -76,7 +76,7 @@ rc17::Coor3D rc17::PillarState::middleFilter(Coor3D pillarCoor)
 
 rc17::Coor3D rc17::PillarState::getPillarCoor()
 {
-	Coor2D pillarPixel = getPillarPixel();
+	Coor2D pillarPixel = getPillarPixel(PillarVar::index);
 # ifdef USESOCKET
 	//char tmp[3] = { 0xaa, 0xbb, pillarPixelColumn - pillarColumn };
 	//send(sockClient, tmp, 3, 0);
@@ -89,9 +89,9 @@ rc17::Coor3D rc17::PillarState::getPillarCoor()
 	return pillarCoor;
 }
 
-rc17::Coor2D rc17::PillarState::getPillarPixel()
+rc17::Coor2D rc17::PillarState::getPillarPixel(int index)
 {
-	Coor3D calculateCoor = CoorTransform::worldToCamera(CameraVar::cameraParam, pillarWorldCoor[PillarVar::index]);
+	Coor3D calculateCoor = CoorTransform::worldToCamera(CameraVar::cameraParam, pillarWorldCoor[index]);
 
 	double pillarRow, pillarColumn;
 	bool notBeyond = CoorTransform::cameraToPixel(calculateCoor, pillarRow, pillarColumn);
@@ -266,10 +266,10 @@ bool rc17::PillarState::lockPillar(int type)
 	return false;
 }
 
-bool rc17::PillarState::hasBall()
+bool rc17::PillarState::hasBall(int index)
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
+	if(PillarVar::pillarLocRow[PillarIndex(index)] - PillarVar::pixelCoor.row > thresBall)
 		return true;	
 	return false;
 }

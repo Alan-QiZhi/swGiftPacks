@@ -39,8 +39,11 @@ namespace rc17
 	{
 	public:
 		static Coor3D worldCoor;
+		static Coor3D worldCoor2nd;
 		static Coor2D pixelCoor;
+		static Coor2D pixelCoor2nd;
 		static int index;
+		static int index2nd;
 		//摄像头修yaw用
 		static const int pillarLocCol[7];
 		//摄像头修yaw用(ball)

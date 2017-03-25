@@ -43,16 +43,17 @@ void rc17::Execute::run(HObject _depthImage)
 	//设置摄像头位置参数
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
-	PillarVar::pixelCoor = PillarState::getPillarPixel();
-	cout << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column << endl;
+	PillarVar::pixelCoor = PillarState::getPillarPixel(PillarVar::index);
+	PillarVar::pixelCoor2nd = PillarState::getPillarPixel(PillarVar::index2nd);
+	//cout << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column << endl;
 
 	//获得柱子的世界坐标
-	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) {
+	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) 
 		PillarVar::worldCoor = CameraVar::getWorldCoor(PillarVar::pixelCoor.row, PillarVar::pixelCoor.column);
-		//cout << "worldCoorZ: " << PillarVar::worldCoor.z << endl;
-	}
+	if (PillarVar::pixelCoor2nd.row > 0 && PillarVar::pixelCoor2nd.column > 0)
+		PillarVar::worldCoor2nd = CameraVar::getWorldCoor(PillarVar::pixelCoor2nd.row, PillarVar::pixelCoor2nd.column);
 	//追踪飞盘(没有球的时候)
-	if (PillarState::hasBall() == false)
+	if (PillarState::hasBall(PillarVar::index) == false || PillarState::hasBall(PillarVar::index2nd) == false)
 	{
 		saucerTrack();
 	}

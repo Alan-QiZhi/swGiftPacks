@@ -239,6 +239,12 @@ int rc17::FindRegion::getOffset(double offset[2])
 		(regionTrack[index2].y - (regionTrack[index1].y));
 	ratioThree[2] = (regionTrack[index2].z - regionTrack[index0].z) /
 		(regionTrack[index2].y - regionTrack[index0].y);
+	///////////////////////////////////////
+	if (regionTrack[index0].x - regionTrack[index1].x > 0)
+		;//PillarVar::index
+	else
+		;//PillarVar::index2nd
+	///////////////////////////////////////
 	for (int i = 0; i < 3; i++)
 	{
 		if (ratioThree[i] > 4)

@@ -44,7 +44,7 @@ void rc17::Execute::run(HObject _depthImage)
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
 	PillarVar::pixelCoor = PillarState::getPillarPixel();
-	//cout << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column << endl;
+	cout << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column << endl;
 
 	//获得柱子的世界坐标
 	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) {
@@ -62,12 +62,12 @@ void rc17::Execute::run(HObject _depthImage)
 void rc17::Execute::initPos()
 {
 #ifdef REDTEAM
-	CameraVar::cameraOffset.x = 359.10;
-	CameraVar::cameraOffset.y = 315.73;
+	CameraVar::cameraOffset.x = 218.55;
+	CameraVar::cameraOffset.y = 172.55;
 #endif
 #ifdef BLUETEAM
-	CameraVar::cameraOffset.x = -359.10;
-	CameraVar::cameraOffset.y = 315.73;
+	CameraVar::cameraOffset.x = -218.55;
+	CameraVar::cameraOffset.y = 172.55;
 #endif
 }
 
@@ -129,12 +129,12 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 
-	//CameraVar::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
-	//CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
-	//CameraVar::cameraParam.yaw = 0 + CAMERAROTATE;
+	CameraVar::cameraParam.worldX = 11500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
+	CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
+	CameraVar::cameraParam.yaw = 0;
 
-	CameraVar::cameraParam.worldZ = 728;
-	CameraVar::cameraParam.pitch = 16.3;
+	CameraVar::cameraParam.worldZ = 650;
+	CameraVar::cameraParam.pitch = 18.3;
 }
 
 void rc17::Execute::getPillarCoor()

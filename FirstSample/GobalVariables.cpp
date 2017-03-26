@@ -26,11 +26,8 @@ rc17::Coor3D rc17::CameraVar::getWorldCoor(double _row, double _column)
 }
 
 rc17::Coor3D rc17::PillarVar::worldCoor = Coor3D();
-rc17::Coor3D rc17::PillarVar::worldCoor2nd = Coor3D();
 rc17::Coor2D rc17::PillarVar::pixelCoor = Coor2D();
-rc17::Coor2D rc17::PillarVar::pixelCoor2nd = Coor2D();
-int rc17::PillarVar::index = 5;
-int rc17::PillarVar::index2nd = 0;
+int rc17::PillarVar::index = 0;
 
 int const rc17::PillarVar::pillarLocCol[7]
 {
@@ -44,7 +41,7 @@ int const rc17::PillarVar::pillarBallCol[7]
 
 int const rc17::PillarVar::pillarLocRow[7]
 {
-	353,471,411,348,405,477,431
+	367,463,412,341,415,469,425
 };
 
 double rc17::PillarVar::correctedYaw[7]

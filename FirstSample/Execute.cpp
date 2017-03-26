@@ -43,17 +43,16 @@ void rc17::Execute::run(HObject _depthImage)
 	//设置摄像头位置参数
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
-	PillarVar::pixelCoor = PillarState::getPillarPixel(PillarVar::index);
-	PillarVar::pixelCoor2nd = PillarState::getPillarPixel(PillarVar::index2nd);
+	PillarVar::pixelCoor = PillarState::getPillarPixel();
 	//cout << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column << endl;
 
 	//获得柱子的世界坐标
-	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) 
+	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) {
 		PillarVar::worldCoor = CameraVar::getWorldCoor(PillarVar::pixelCoor.row, PillarVar::pixelCoor.column);
-	if (PillarVar::pixelCoor2nd.row > 0 && PillarVar::pixelCoor2nd.column > 0)
-		PillarVar::worldCoor2nd = CameraVar::getWorldCoor(PillarVar::pixelCoor2nd.row, PillarVar::pixelCoor2nd.column);
+		//cout << "worldCoorZ: " << PillarVar::worldCoor.z << endl;
+	}
 	//追踪飞盘(没有球的时候)
-	if (PillarState::hasBall(PillarVar::index) == false || PillarState::hasBall(PillarVar::index2nd) == false)
+	if (PillarState::hasBall() == false)
 	{
 		saucerTrack();
 	}
@@ -63,12 +62,12 @@ void rc17::Execute::run(HObject _depthImage)
 void rc17::Execute::initPos()
 {
 #ifdef REDTEAM
-	CameraVar::cameraOffset.x = 218.55;
-	CameraVar::cameraOffset.y = 172.55;
+	CameraVar::cameraOffset.x = 359.10;
+	CameraVar::cameraOffset.y = 315.73;
 #endif
 #ifdef BLUETEAM
-	CameraVar::cameraOffset.x = -218.55;
-	CameraVar::cameraOffset.y = 172.55;
+	CameraVar::cameraOffset.x = -359.10;
+	CameraVar::cameraOffset.y = 315.73;
 #endif
 }
 
@@ -130,12 +129,12 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 
-	CameraVar::cameraParam.worldX = 11500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
-	CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
-	CameraVar::cameraParam.yaw = 0;
+	//CameraVar::cameraParam.worldX = 7500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
+	//CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
+	//CameraVar::cameraParam.yaw = 0 + CAMERAROTATE;
 
-	CameraVar::cameraParam.worldZ = 650;
-	CameraVar::cameraParam.pitch = 18.3;
+	CameraVar::cameraParam.worldZ = 728;
+	CameraVar::cameraParam.pitch = 16.3;
 }
 
 void rc17::Execute::getPillarCoor()

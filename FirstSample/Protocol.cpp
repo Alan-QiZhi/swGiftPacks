@@ -1,7 +1,7 @@
 #include "Protocol.h"
 #include "GobalVariables.h"
 
-void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, double data3, double data4, double data5)
+void rc17::Protocol::sendToUnderPan(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
 	if (ThreadFlag::t_Num == false)
 		return;
@@ -32,9 +32,34 @@ void rc17::Protocol::sendDataBySerialPort(int cmd, double data1, double data2, d
 
 }
 
-void rc17::Protocol::sendDataBySerialPort(int cmd, double yaw, DelayCorrectVariables correctPara)
+void rc17::Protocol::sendToUnderPan(int cmd, double yaw, DelayCorrectVariables correctPara)
 {
-	sendDataBySerialPort(cmd, correctPara.pitch / correctPara.haveDataNum, correctPara.roll / correctPara.haveDataNum, yaw, -correctPara.bigWheel / correctPara.haveDataNum, -correctPara.smallWheel / correctPara.haveDataNum);
+	sendToUnderPan(cmd, correctPara.pitch / correctPara.haveDataNum, correctPara.roll / correctPara.haveDataNum, yaw, -correctPara.bigWheel / correctPara.haveDataNum, -correctPara.smallWheel / correctPara.haveDataNum);
+}
+
+void rc17::Protocol::sendToCloudDeck(double data1, double data2, int16_t data3, int16_t data4)
+{
+	if (ComVar::serialPort.isOpened())
+	{
+		unsigned char bytesToSend[7];
+		auto f = [&bytesToSend](float data) {return((unsigned char*)&(*(float*)(bytesToSend + 2) = data) - 2); };
+		bytesToSend[0] = 0xf0;
+		bytesToSend[6] = 0x0f;
+		
+
+		bytesToSend[1] = SPEED_SEM;
+		*(int16_t*)(bytesToSend + 2) = data3;
+		*(int16_t*)(bytesToSend + 4) = data4;
+		ComVar::serialPort.send(bytesToSend, 7);
+
+		bytesToSend[1] = PITCH_SEM;
+		ComVar::serialPort.send(f(data1), 7);
+
+		bytesToSend[1] = YAW_SEM;
+		ComVar::serialPort.send(f(data2), 7);
+	}
+	else
+		throw exception("´®¿ÚÎ´´ò¿ª£¡");
 }
 
 void rc17::Protocol::sendDataForBall()

@@ -12,6 +12,7 @@ using namespace std;
 #define USESERIALPORT
 #define BLUETEAM
 //#define USESOCKET
+#define SENDTOUNDERPAN
 namespace rc17
 {
 	class HalconVar

@@ -201,6 +201,8 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				PillarVar::correctedYaw[PillarVar::index] += Correct_Par[3];
 				cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
 					Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
+				delete[] Correct_Par;
+				delete[] rtOffset;
 			}
 			else if (trackSuccess == 1)
 				datafile << "飞盘" << regionVector[i].getSaucerIndex() << "采集点太少或者是杂物" << endl;

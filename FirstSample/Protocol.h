@@ -5,10 +5,10 @@
 #define PITCH_SEM  102
 #define YAW_SEM 103
 #ifdef SENDTOCLOUDDECK
-#define sendDataBySerialPort sendToCloudDeck
+#define sendDataBySerialPort(...) sendToCloudDeck(__VA_ARGS__)
 #endif 
 #ifdef SENDTOUNDERPAN
-#define sendDataBySerialPort sendToUnderPan
+#define sendDataBySerialPort(...) sendToUnderPan(__VA_ARGS__)
 #endif
 namespace rc17
 {

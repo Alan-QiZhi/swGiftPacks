@@ -117,7 +117,7 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.worldY = CameraVar::receiveY +
 		CoorTransform::rotateVector(CameraVar::cameraOffset, -CameraVar::receiveAngle).y;
 	//receiveY + 摄像头偏移车坐标点 +
-	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CAMERAROTATE;
+	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 #ifdef BLUETEAM
 	CameraVar::cameraParam.worldX = -CameraVar::receiveX +
@@ -129,10 +129,10 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 
-	CameraVar::cameraParam.worldX = 11500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
-	CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
-	CameraVar::cameraParam.yaw = 0;
-
+	//CameraVar::cameraParam.worldX = 11500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
+	//CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
+	//CameraVar::cameraParam.yaw = -20;
+	
 	CameraVar::cameraParam.worldZ = 650;
 	CameraVar::cameraParam.pitch = 18.3;
 }

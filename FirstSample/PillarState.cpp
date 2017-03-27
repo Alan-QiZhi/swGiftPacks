@@ -95,7 +95,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 
 	double pillarRow, pillarColumn;
 	bool notBeyond = CoorTransform::cameraToPixel(calculateCoor, pillarRow, pillarColumn);
-
+	//cout << pillarRow << "   " << pillarColumn << endl;
 #ifdef DEBUG
 	SetColor(HalconVar::hv_WindowHandle, "red");
 	HObject RectSB;

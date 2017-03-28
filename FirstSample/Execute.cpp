@@ -129,9 +129,9 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 
-	//CameraVar::cameraParam.worldX = 11500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
+	//CameraVar::cameraParam.worldX = 5500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
 	//CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
-	//CameraVar::cameraParam.yaw = -20;
+	//CameraVar::cameraParam.yaw = 0;
 	
 	CameraVar::cameraParam.worldZ = 650;
 	CameraVar::cameraParam.pitch = 18.3;

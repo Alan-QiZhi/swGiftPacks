@@ -30,8 +30,8 @@ rc17::Coor2D rc17::PillarVar::pixelCoor = Coor2D();
 int rc17::PillarVar::index = 1;
 
 int const rc17::PillarVar::pillarLocCol[7]
-{
-	-128,258,275,285,235,297,274
+{ 
+	208,458,393,361,235,297,274
 };
 
 int const rc17::PillarVar::pillarBallCol[7]
@@ -41,7 +41,7 @@ int const rc17::PillarVar::pillarBallCol[7]
 
 int const rc17::PillarVar::pillarLocRow[7]
 {
-	353,471,411,348,405,477,431
+	358,468,408,347,405,477,431
 };
 
 double rc17::PillarVar::correctedYaw[7]

@@ -113,26 +113,36 @@ void rc17::scanfKey()
 	}
 }
 
-void rc17::coutDatas()
+void rc17::keyCmd()
 {
-	cout << "ctrl + 1:under pan pos" << endl;
-	cout << "ctrl + 2:caculate point" << endl;
-	cout << "ctrl + 3:pillar coor" << endl;
-	cout << "ctrl + 4:all gobal variables!!!" << endl;
-	cout << "ctrl + 5:serial send state switch" << endl;
-	bool keyState[5];
+	auto help = []()
+	{
+		cout << endl << "ctrl + 0:help" << endl;
+		cout << "ctrl + 1:under pan pos" << endl;
+		cout << "ctrl + 2:caculate point" << endl;
+		cout << "ctrl + 3:pillar coor" << endl;
+		cout << "ctrl + 4:all gobal variables!!!" << endl;
+		cout << "ctrl + 5:serial send state switch" << endl << endl;
+	};
+	help();
+	bool keyState[10];
 	while (ThreadFlag::run)
 	{
 		while (GetKeyState(VK_CONTROL) < 0)//ctrl按下
 		{
 			for (int i = 0; i < sizeof(keyState); i++)
-				if(GetKeyState(i + 49) >= 0)
-					keyState[i] = GetKeyState(i + 49);//记录数字键up or down的状态
-			Sleep(30);
+				if(GetKeyState(i + 48) >= 0)
+					keyState[i] = GetKeyState(i + 48);//记录数字键up or down的状态
+			Sleep(20);
 			for (int i = 0; i < sizeof(keyState); i++)
-				if (GetKeyState(i + 49) >= 0 && !(GetKeyState(i + 49) == keyState[i]))//如果状态切换更新状态和flag
+				if (GetKeyState(i + 48) >= 0 && !(GetKeyState(i + 48) == keyState[i]))//如果状态切换更新状态和flag
 				{
-					if (i == 3)
+					if (i == 0)
+					{
+						help();
+						continue;
+					}
+					if (i == 4)
 					{
 						cout << "CameraVar:" << endl
 							<< "   receiveX:" << CameraVar::receiveX << "   receiveY:" << CameraVar::receiveY
@@ -142,13 +152,15 @@ void rc17::coutDatas()
 							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
 							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column  << "   index:" << PillarVar::index << endl;
 						cout << endl;
+						continue;
 					}
 					ThreadFlag::flags[i] = !ThreadFlag::flags[i];
 					keyState[i] = !keyState[i];
-					if (i == 4 && ThreadFlag::flags[4] == true)
-						cout << "serial send:enable" << endl;
-					if (i == 4 && ThreadFlag::flags[4] == false)
-						cout << "serial send:disable" << endl;
+					if (i == 5)
+						if(ThreadFlag::flags[5] == true)
+							cout << "serial send:enable" << endl;
+						else
+							cout << "serial send:disable" << endl;
 				}
 		}
 		Sleep(200);

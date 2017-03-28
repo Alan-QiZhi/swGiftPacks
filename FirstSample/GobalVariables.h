@@ -66,7 +66,7 @@ namespace rc17
 	public:
 		static char t_Num;
 		static bool run;
-		static bool flags[5];
+		static bool flags[10];
 	};
 }
 

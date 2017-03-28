@@ -3,7 +3,7 @@
 
 void rc17::Protocol::sendToUnderPan(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
-	if (ThreadFlag::t_Num == false || ThreadFlag::flags[4] == false)
+	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
 		return;
 	long tmp1 = data1 * 10, tmp2 = data2 * 10, tmp3 = data3 * 10,
 		tmp4 = data4, tmp5 = data5;
@@ -39,6 +39,8 @@ void rc17::Protocol::sendToUnderPan(int cmd, double yaw, DelayCorrectVariables c
 
 void rc17::Protocol::sendToCloudDeck(double data1, double data2, int16_t data3, int16_t data4)
 {
+	if (ThreadFlag::flags[5] == false)
+		return;
 	if (ComVar::serialPort.isOpened())
 	{
 		unsigned char bytesToSend[7];

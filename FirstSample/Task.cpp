@@ -116,23 +116,39 @@ void rc17::scanfKey()
 void rc17::coutDatas()
 {
 	cout << "ctrl + 1:under pan pos" << endl;
-	cout << "ctrl + 2:" << endl;
-	cout << "ctrl + 3:" << endl;
-	cout << "ctrl + 4:" << endl;
-	bool keyState[4], flags[4] = { 0 };
-	while (rc17::ThreadFlag::run)
+	cout << "ctrl + 2:caculate point" << endl;
+	cout << "ctrl + 3:pillar coor" << endl;
+	cout << "ctrl + 4:all gobal variables!!!" << endl;
+	cout << "ctrl + 5:serial send state switch" << endl;
+	bool keyState[5];
+	while (ThreadFlag::run)
 	{
 		while (GetKeyState(VK_CONTROL) < 0)//ctrl按下
 		{
 			for (int i = 0; i < sizeof(keyState); i++)
-				if(GetKeyState(i + 48) >= 0)
-					keyState[i] = GetKeyState(i + 48);
+				if(GetKeyState(i + 49) >= 0)
+					keyState[i] = GetKeyState(i + 49);//记录数字键up or down的状态
 			Sleep(30);
 			for (int i = 0; i < sizeof(keyState); i++)
-				if (GetKeyState(i + 48) >= 0 && !(GetKeyState(i + 48) == keyState[i]))
+				if (GetKeyState(i + 49) >= 0 && !(GetKeyState(i + 49) == keyState[i]))//如果状态切换更新状态和flag
 				{
-					flags[i] = !flags[i];
+					if (i == 3)
+					{
+						cout << "CameraVar:" << endl
+							<< "   receiveX:" << CameraVar::receiveX << "   receiveY:" << CameraVar::receiveY
+							<< "   receiveAngle" << CameraVar::receiveAngle << endl;
+						cout << "PillarVar:" << endl
+							<< "   worldCoor.x:" << PillarVar::worldCoor.x << "   worldCoor.y:" << PillarVar::worldCoor.y
+							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
+							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column  << "   index:" << PillarVar::index << endl;
+						cout << endl;
+					}
+					ThreadFlag::flags[i] = !ThreadFlag::flags[i];
 					keyState[i] = !keyState[i];
+					if (i == 4 && ThreadFlag::flags[4] == true)
+						cout << "serial send:enable" << endl;
+					if (i == 4 && ThreadFlag::flags[4] == false)
+						cout << "serial send:disable" << endl;
 				}
 		}
 		Sleep(200);

@@ -54,3 +54,4 @@ rc17::SocketClient rc17::ComVar::mySocketClient;
 
 char rc17::ThreadFlag::t_Num = false;
 bool rc17::ThreadFlag::run = true;
+bool rc17::ThreadFlag::flags[5] = { 0 };

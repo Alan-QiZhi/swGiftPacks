@@ -112,3 +112,29 @@ void rc17::scanfKey()
 		}
 	}
 }
+
+void rc17::coutDatas()
+{
+	cout << "ctrl + 1:under pan pos" << endl;
+	cout << "ctrl + 2:" << endl;
+	cout << "ctrl + 3:" << endl;
+	cout << "ctrl + 4:" << endl;
+	bool keyState[4], flags[4] = { 0 };
+	while (rc17::ThreadFlag::run)
+	{
+		while (GetKeyState(VK_CONTROL) < 0)//ctrl°´ÏÂ
+		{
+			for (int i = 0; i < sizeof(keyState); i++)
+				if(GetKeyState(i + 48) >= 0)
+					keyState[i] = GetKeyState(i + 48);
+			Sleep(30);
+			for (int i = 0; i < sizeof(keyState); i++)
+				if (GetKeyState(i + 48) >= 0 && !(GetKeyState(i + 48) == keyState[i]))
+				{
+					flags[i] = !flags[i];
+					keyState[i] = !keyState[i];
+				}
+		}
+		Sleep(200);
+	}
+}

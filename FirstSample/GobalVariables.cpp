@@ -44,7 +44,7 @@ int const rc17::PillarVar::pillarBallCol[14]
 int const rc17::PillarVar::pillarLocRow[14]
 {
 	358,468,406,347,405,468,431,
-	362,-128,-128,345,-128,-128,-128//车在右侧的数据
+	362,480,480,345,480,480,480//车在右侧的数据
 };
 
 double rc17::PillarVar::correctedYaw[14]

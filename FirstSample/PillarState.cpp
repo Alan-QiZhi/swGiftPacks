@@ -222,44 +222,12 @@ bool rc17::PillarState::lockPillar(int type)
 #ifdef USESERIALPORT		
 		if (Protocol::correctPara[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7].haveDataNum != 0)//捎带发送上次修正值
 		{
-			//if (abs(yawToFix) < 1)
-			//	if (yawToFix > 0)
-			//	{
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
-			//		this_thread::sleep_for(chrono::milliseconds(500));
-			//		Protocol::sendDataBySerialPort(cmd, -1.1, Protocol::correctPara[PillarVar::index]);
-			//	}
-			//	else
-			//	{
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
-			//		this_thread::sleep_for(chrono::milliseconds(500));
-			//		Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVar::index]);
-			//	}
-			//else
-				//Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVar::index]);
 			Protocol::sendDataBySerialPort(cmd,0,0,yawToFix,0,0);
 			Protocol::correctPara[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7].haveDataNum = 0;
 		}
 		else
 		{
-			//if (abs(yawToFix) < 1)
-			//	if (yawToFix > 0)
-			//	{
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix + 1.1, 0, 0);
-			//		this_thread::sleep_for(chrono::milliseconds(500));
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, -1.1, 0, 0);
-			//	}
-			//	else
-			//	{
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix - 1.1, 0, 0);
-			//		this_thread::sleep_for(chrono::milliseconds(500));
-			//		Protocol::sendDataBySerialPort(cmd, 0, 0, 1.1, 0, 0);
-			//	}
-
-			//else
-			//{
 				Protocol::sendDataBySerialPort(cmd, 0, 0, yawToFix, 0, 0);
-			//}
 		}
 #endif
 	}
@@ -271,7 +239,7 @@ bool rc17::PillarState::lockPillar(int type)
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	//if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
-	//	return true;	
+	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
+		return true;	
 	return false;
 }

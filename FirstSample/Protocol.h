@@ -26,6 +26,7 @@ namespace rc17
 			int haveDataNum = 0;
 			void assign(float* correctPara);
 		};
+		static void send7bytes(int type, float data, float data2 = 0);
 	public :
 		enum COMCMD
 		{
@@ -44,3 +45,41 @@ namespace rc17
 		static void sendDataBySocket(double data1 = 0, double data2 = 0, double data3 = 0);
 	};
 }
+
+// 将基础类型与字节数组相互转换
+namespace BitConverter
+{
+	// 记得释放内存
+	template <typename T>
+	char* GetBytes(T val)
+	{
+		union
+		{
+			T _val;
+			char _bytes[sizeof(T)];
+		};
+		_val = val;
+		char* pRlt = new char[sizeof(T)];
+		for (int i = 0; i < sizeof(T); i++)
+		{
+			pRlt[i] = _bytes[i];
+		}
+		return pRlt;
+	}
+
+	template <typename T>
+	T FromBytes(char* bytes)
+	{
+		union
+		{
+			T _val;
+			char _bytes[sizeof(T)];
+		};
+		for (int i = 0; i < sizeof(T); i++)
+		{
+			_bytes[i] = bytes[i];
+		}
+		return _val;
+	}
+};
+

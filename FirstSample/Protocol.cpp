@@ -43,22 +43,26 @@ void rc17::Protocol::sendToCloudDeck(double data1, double data2, int16_t data3, 
 		return;
 	if (ComVar::serialPort.isOpened())
 	{
-		unsigned char bytesToSend[7];
-		auto f = [&bytesToSend](float data) {return((unsigned char*)&(*(float*)(bytesToSend + 2) = data) - 2); };
-		bytesToSend[0] = 0xf0;
-		bytesToSend[6] = 0x0f;
-		
+		send7bytes(SPEED_SEM, data3, data4);
+		send7bytes(PITCH_SEM, data1);
+		send7bytes(YAW_SEM, data2);
 
-		bytesToSend[1] = SPEED_SEM;
-		*(int16_t*)(bytesToSend + 2) = data3;
-		*(int16_t*)(bytesToSend + 4) = data4;
-		ComVar::serialPort.send(bytesToSend, 7);
+		//unsigned char bytesToSend[7];
+		//auto f = [&bytesToSend](float data) {return((unsigned char*)&(*(float*)(bytesToSend + 2) = data) - 2); };
+		//bytesToSend[0] = 0xf0;
+		//bytesToSend[6] = 0x0f;
+		//
+		// 
+		//bytesToSend[1] = SPEED_SEM;
+		//*(int16_t*)(bytesToSend + 2) = data3;
+		//*(int16_t*)(bytesToSend + 4) = data4;
+		//ComVar::serialPort.send(bytesToSend, 7);
 
-		bytesToSend[1] = PITCH_SEM;
-		ComVar::serialPort.send(f(data1), 7);
+		//bytesToSend[1] = PITCH_SEM;
+		//ComVar::serialPort.send(f(data1), 7);
 
-		bytesToSend[1] = YAW_SEM;
-		ComVar::serialPort.send(f(data2), 7);
+		//bytesToSend[1] = YAW_SEM;
+		//ComVar::serialPort.send(f(data2), 7);
 	}
 	else
 		throw exception("串口未打开！");
@@ -173,4 +177,42 @@ void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)
 		haveDataNum = 1;
 	}
 }
+
+void rc17::Protocol::send7bytes(int type, float data, float data2)
+{
+	unsigned char bytesToSend[7];
+	bytesToSend[0] = 0xf0;
+	bytesToSend[1] = static_cast<char>(type);
+	switch(type)
+	{
+	case SPEED_SEM:
+		char* bytes = BitConverter::GetBytes(static_cast<int16_t>(data));
+		bytesToSend[2] = bytes[0];
+		bytesToSend[3] = bytes[1];
+		delete[] bytes;
+
+		char* bytes2 = BitConverter::GetBytes(static_cast<int16_t>(data2));
+		bytesToSend[4] = bytes2[0];
+		bytesToSend[5] = bytes2[1];
+		delete[] bytes2;
+		break;
+	case YAW_SEM:
+	case PITCH_SEM:
+		char* bytesf = BitConverter::GetBytes(data);
+		bytesToSend[2] = bytesf[0];
+		bytesToSend[3] = bytesf[1];
+		bytesToSend[4] = bytesf[2];
+		bytesToSend[5] = bytesf[3];
+		delete[] bytesf;
+		break;
+	default:
+		cerr << "错误： 无法识别的指令";
+		break;
+	}
+
+	bytesToSend[6] = 0x0f;
+	ComVar::serialPort.send(bytesToSend, 7);
+}
+
+
 rc17::Protocol::DelayCorrectVariables rc17::Protocol::correctPara[7] = {};

@@ -189,15 +189,15 @@ bool rc17::PillarState::lockPillar(int type)
 	{
 	case WithBall:
 	{
-		pixelOffset = PillarVar::pillarBallCol[PillarIndex(CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7)]
+		pixelOffset = PillarVar::pillarBallCol[PillarIndex(CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7)]
 			- PillarVar::pixelCoor.column;
 		cmd = Protocol::BallPara;
 		break;
 	}
 	case NoBall:
 	{
-		pixelOffset = PillarVar::pillarLocCol[PillarIndex(CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7)]
-			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7]/57.0*640;
+		pixelOffset = PillarVar::pillarLocCol[PillarIndex(CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7)]
+			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7]/57.0*640;
 		cmd = Protocol::NoBallPara;
 		break;
 	}
@@ -220,10 +220,10 @@ bool rc17::PillarState::lockPillar(int type)
 		cout << yawToFix << endl;
 		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		
-		if (Protocol::correctPara[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7].haveDataNum != 0)//捎带发送上次修正值
+		if (Protocol::correctPara[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7].haveDataNum != 0)//捎带发送上次修正值
 		{
 			Protocol::sendDataBySerialPort(cmd,0,0,yawToFix,0,0);
-			Protocol::correctPara[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7].haveDataNum = 0;
+			Protocol::correctPara[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7].haveDataNum = 0;
 		}
 		else
 		{
@@ -239,7 +239,7 @@ bool rc17::PillarState::lockPillar(int type)
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
-		return true;	
+/*	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
+		return true;*/	
 	return false;
 }

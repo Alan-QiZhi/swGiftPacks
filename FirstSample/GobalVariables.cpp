@@ -27,24 +27,24 @@ rc17::Coor3D rc17::CameraVar::getWorldCoor(double _row, double _column)
 
 rc17::Coor3D rc17::PillarVar::worldCoor = Coor3D();
 rc17::Coor2D rc17::PillarVar::pixelCoor = Coor2D();
-int rc17::PillarVar::index = 5;
+int rc17::PillarVar::index = 4;
 
 int const rc17::PillarVar::pillarLocCol[14]
 { 
-	208,399,372,361,237,352,274,
-	301,-128,-128,346,-128,-128,-128//车在右侧的数据
+	208,399,372,361,-237,-352,274,
+	301,-128,-128,346,237,352,-128//车在B(9000)的数据
 };
 
 int const rc17::PillarVar::pillarBallCol[14]
 {
 	-128,253,274,270,275,295,284
-	-128,-128,-128,-128,-128,-128,-128//车在右侧的数据
+	-128,-128,-128,-128,-128,-128,-128//车在B(9000)的数据
 };
 
 int const rc17::PillarVar::pillarLocRow[14]
 {
 	358,468,406,347,405,468,431,
-	362,480,480,345,480,480,480//车在右侧的数据
+	362,480,480,345,405,468,480//车在B(9000)的数据
 };
 
 double rc17::PillarVar::correctedYaw[14]

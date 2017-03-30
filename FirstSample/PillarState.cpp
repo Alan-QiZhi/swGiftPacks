@@ -189,15 +189,15 @@ bool rc17::PillarState::lockPillar(int type)
 	{
 	case WithBall:
 	{
-		pixelOffset = PillarVar::pillarBallCol[PillarIndex(PillarVar::index)]
+		pixelOffset = PillarVar::pillarBallCol[PillarIndex(CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7)]
 			- PillarVar::pixelCoor.column;
 		cmd = Protocol::BallPara;
 		break;
 	}
 	case NoBall:
 	{
-		pixelOffset = PillarVar::pillarLocCol[PillarIndex(PillarVar::index)]
-			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[PillarVar::index]/57.0*640;
+		pixelOffset = PillarVar::pillarLocCol[PillarIndex(CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7)]
+			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7]/57.0*640;
 		cmd = Protocol::NoBallPara;
 		break;
 	}
@@ -220,7 +220,7 @@ bool rc17::PillarState::lockPillar(int type)
 		cout << yawToFix << endl;
 		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		
-		if (Protocol::correctPara[PillarVar::index].haveDataNum != 0)//捎带发送上次修正值
+		if (Protocol::correctPara[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7].haveDataNum != 0)//捎带发送上次修正值
 		{
 			//if (abs(yawToFix) < 1)
 			//	if (yawToFix > 0)
@@ -236,8 +236,9 @@ bool rc17::PillarState::lockPillar(int type)
 			//		Protocol::sendDataBySerialPort(cmd, 1.1, Protocol::correctPara[PillarVar::index]);
 			//	}
 			//else
-				Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVar::index]);
-			Protocol::correctPara[PillarVar::index].haveDataNum = 0;
+				//Protocol::sendDataBySerialPort(cmd, yawToFix, Protocol::correctPara[PillarVar::index]);
+			Protocol::sendDataBySerialPort(cmd,0,0,yawToFix,0,0);
+			Protocol::correctPara[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7].haveDataNum = 0;
 		}
 		else
 		{
@@ -270,7 +271,7 @@ bool rc17::PillarState::lockPillar(int type)
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
-		return true;	
+	//if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
+	//	return true;	
 	return false;
 }

@@ -271,7 +271,7 @@ int main(int argc, char* argv[])
 	
     int exitCode = EXIT_SUCCESS;
 	myExe.init();
-	//std::thread t_Correct(rc17::Correct);
+	std::thread t_Correct(rc17::Correct);
 	std::thread t_keycmd(rc17::keyCmd);
     try
     {
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
     if ( CToFCamera::IsProducerInitialized() )
         CToFCamera::TerminateProducer();  // Won't throw any exceptions
 	{
-		//t_Correct.join();//等待该线程结束
+		t_Correct.join();//等待该线程结束
 		t_keycmd.join();
 		return exitCode;
 	}

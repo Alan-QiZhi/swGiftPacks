@@ -45,7 +45,8 @@ void rc17::Execute::run(HObject _depthImage)
 	/****************************************摄像头修正***************************************/
 	PillarVar::pixelCoor = PillarState::getPillarPixel();
 	if(ThreadFlag::flags[3])
-		cout << "pillar coor:Row:" << PillarVar::pixelCoor.row << "   Column:" << PillarVar::pixelCoor.column << endl;
+		cout << "pillar coor:  " << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column 
+		<< "   expect coor:  " << PillarVar::pillarLocRow[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7] << "   " << PillarVar::pillarLocCol[CameraVar::cameraParam.worldX < 6500 ? PillarVar::index : PillarVar::index + 7] << endl;
 
 	//获得柱子的世界坐标
 	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) {
@@ -130,10 +131,10 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.yaw = CameraVar::receiveAngle + CameraVar::cameraRotate;
 #endif
 	if (ThreadFlag::flags[1])
-		cout << "underpan: X:" << CameraVar::receiveX << "   Y:" << CameraVar::receiveY << "   ang:" << CameraVar::receiveAngle << endl;
-	//CameraVar::cameraParam.worldX = 5500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
+		cout << "underpan:   " << CameraVar::receiveX << "   " << CameraVar::receiveY << "   " << CameraVar::receiveAngle << endl;
+	//CameraVar::cameraParam.worldX = 9500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).x;
 	//CameraVar::cameraParam.worldY = 1500 + CoorTransform::rotateVector(CameraVar::cameraOffset, -(8)).y;
-	//CameraVar::cameraParam.yaw = 0;
+	//CameraVar::cameraParam.yaw = -29;
 	
 	CameraVar::cameraParam.worldZ = 650;
 	CameraVar::cameraParam.pitch = 18.3;

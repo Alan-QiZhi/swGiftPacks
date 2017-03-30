@@ -34,7 +34,7 @@ namespace rc17
 			Shoot,
 			CorrectFinish
 		};
-		static DelayCorrectVariables correctPara[7];
+		static DelayCorrectVariables correctPara[14];
 		static void sendToUnderPan(int cmd, double data1, double data2, double data3, double data4, double data5);
 		static void sendToUnderPan(int cmd, double yaw, DelayCorrectVariables correctPara);
 		static void sendToCloudDeck(double data1, double data2, int16_t data3, int16_t data4);

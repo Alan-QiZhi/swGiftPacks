@@ -3,7 +3,7 @@
 
 void rc17::Protocol::sendToUnderPan(int cmd, double data1, double data2, double data3, double data4, double data5)
 {
-	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
+	if (ThreadFlag::t_Num == 0 || ThreadFlag::flags[5] == false)
 		return;
 	long tmp1 = data1 * 10, tmp2 = data2 * 10, tmp3 = data3 * 10,
 		tmp4 = data4, tmp5 = data5;
@@ -92,7 +92,7 @@ void rc17::Protocol::sendDataForBall()
 
 void rc17::Protocol::sendCmd(int cmd)
 {
-	if (ThreadFlag::t_Num == false)
+	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
 		return;
 	unsigned char bytesToSend[16];
 	bytesToSend[0] = 0xb6;
@@ -173,4 +173,7 @@ void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)
 		haveDataNum = 1;
 	}
 }
-rc17::Protocol::DelayCorrectVariables rc17::Protocol::correctPara[7] = {};
+
+
+
+rc17::Protocol::DelayCorrectVariables rc17::Protocol::correctPara[14] = {};

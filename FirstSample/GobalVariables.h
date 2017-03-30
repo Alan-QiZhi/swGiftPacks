@@ -43,15 +43,15 @@ namespace rc17
 		static Coor2D pixelCoor;
 		static int index;
 		//摄像头修yaw用
-		static const int pillarLocCol[7];
+		static const int pillarLocCol[14];
 		//摄像头修yaw用(ball)
-		static const int pillarBallCol[7];
+		static const int pillarBallCol[14];
 		//摄像头判断有无球用。这是无球的row
-		static const int pillarLocRow[7];
+		static const int pillarLocRow[14];
 		//摄像头confidence
 		static const int pillarConfidence[7];
 		//已矫正的Yaw
-		static double correctedYaw[7];
+		static double correctedYaw[14];
 	};
 
 	class ComVar

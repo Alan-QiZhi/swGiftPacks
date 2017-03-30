@@ -11,7 +11,7 @@ void rc17::Correct()
 	bool LastHadBall = false;
 	while(ThreadFlag::run)
 	{
-		if(ThreadFlag::t_Num == true)
+		if(ThreadFlag::t_Num > 0)
 		{
 			if (PillarState::hasBall() == true)
 			{
@@ -33,9 +33,9 @@ void rc17::Correct()
 				Protocol::sendCmd(Protocol::Shoot);
 
 				if (PillarState::hasBall() == true)
-					this_thread::sleep_for(chrono::milliseconds(2000));//打球的延时大一些
+					this_thread::sleep_for(chrono::milliseconds(3000));//打球的延时大一些
 				else
-					this_thread::sleep_for(chrono::milliseconds(1300));//等一发飞盘发射完毕
+					this_thread::sleep_for(chrono::milliseconds(3000));//等一发飞盘发射完毕
 				continue;
 			}
 		}
@@ -151,6 +151,7 @@ void rc17::keyCmd()
 							<< "   worldCoor.x:" << PillarVar::worldCoor.x << "   worldCoor.y:" << PillarVar::worldCoor.y
 							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
 							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column  << "   index:" << PillarVar::index << endl;
+						cout << "seriel send flag: " << ThreadFlag::flags[5] << endl;
 						cout << endl;
 						continue;
 					}

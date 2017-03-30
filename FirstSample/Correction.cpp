@@ -24,13 +24,15 @@
 *------------------------------------------*/
 
 static float Max_Value[7][10] = { { 0, 0, 0, 0, 8, -8 },
-{ 2, -2,  2, -2,   8,  -8,  100,  -100,  220,  -220 },
+{ 2, -2,  2, -2,   8,  -8,  100,  -100,  300,  -300 },
 { 3, -3,  4, -4,  10, -10,  30,  -30,  210,  -240 },
 { 0, 0, 0, 0,  8, -8  },
 { 0, 0, 0, 0,  8, -8  },
 { 0, 0, 0, 0,  8, -8  },
 { 0, 0, 0, 0,  8, -8  },
 };//--范围检查值--
+
+static float Disk_OldState[5] ={0, 0, 0, 0, 0}; //符合条件个数， 上一状态x，上一状态y ,不确定状态x，不确定状态y
 
 static float Correct_DeltaAll[7][5] = {
 	{ 0, 0, 0, 0, 0, },
@@ -43,7 +45,7 @@ static float Correct_DeltaAll[7][5] = {
 };//--修正delta值总和--
 
 static float Correct_BestDelta[8][5] = { 
-	{ 7, 200, 1,  0,  },  //台子编号，最小偏差，可信度
+	{ 7, 60, 1,  0,  },  //台子编号，最小偏差，可信度
 	{ 0, 0, 0, 0, 0, },
 	{ 0, 0, 0, 0, 0, },
 	{ 0, 0, 0, 0, 0, },
@@ -68,296 +70,6 @@ float Gauss(float x, int mu, int sigma)
 	y = exp(-0.5 * ((x - mu) / sigma) * ((x - mu) / sigma)) / (sqrt(2 * pi) * sigma);
 
 	return y;
-}
-
-
-
-//--计算修正量大小--
-void rc17::Correction::Correct_Point(double Correct_Par[], double Point[])
-{
-	int Coff_Correct = 6;
-	int flag = 0;
-	double Confidence_Percent;
-	double Length;
-	double P_Gauss;
-	const double Ideal_Point[2] = { 0, 0 };
-	double Value_Corct[3] = { Correct_Par[3], Correct_Par[4], Correct_Par[5] };
-	double Correct_Max = 38;						//---为40cm处最低可信度时的修正量
-
-												//------参数值计算-----
-	Confidence_Percent = Correct_Par[0];
-	Point[0] = Point[0] / 20;					//---数据缩放
-	Point[1] = Point[1] / 20;
-
-	//------计算距离和高斯分布概率-----
-	Length = (Point[0] - Ideal_Point[0]) * (Point[0] - Ideal_Point[0]) + (Point[1] - Ideal_Point[1]) * (Point[1] - Ideal_Point[1]);
-	Length = sqrt(Length);
-	P_Gauss = Gauss(Length, 0, 1);
-	Coff_Correct += (int)Length * 20;
-
-	//------判断是否需要修正以及相应修正量-----
-	if (P_Gauss < 0.19)  //--对应25cm
-	{
-		flag = 1;
-		Value_Corct[2] = Value_Corct[1];
-		Value_Corct[1] = Value_Corct[0];
-		Value_Corct[0] = (1 - P_Gauss) * Confidence_Percent *  Coff_Correct;
-
-
-		if ((Value_Corct[0] >(Value_Corct[1] + Value_Corct[2])) && (Value_Corct[1] != 0) && (Value_Corct[2] != 0))	//-- 一次限幅
-		{
-			Value_Corct[0] = Value_Corct[1] + Value_Corct[2];
-		}
-
-		if (Value_Corct[0] > Correct_Max)																				//-- 二次限幅
-		{
-			Value_Corct[0] = Correct_Max;
-		}
-
-		Confidence_Percent = Confidence_Percent + (1 - P_Gauss) * Length / 35;  //--信任度修改->减小信任度
-
-		if (Confidence_Percent > 0.97)											//--信任度限幅
-			Confidence_Percent = 0.97;
-	}
-	else
-	{
-		Value_Corct[2] = Value_Corct[1];
-		Value_Corct[1] = Value_Corct[0];
-		Value_Corct[0] = 0;
-		Confidence_Percent = Confidence_Percent - P_Gauss / 4;      //信任度修改 -> 正常情况
-
-		if (Confidence_Percent < 0.03)								//--信任度限幅
-			Confidence_Percent = 0.03;
-	}
-
-	//------程序测试用---------
-	/*cout << "the input point_x is " << Point[0] << "  the input point_y is  " << Point[1] << endl;
-	cout << " the Confidence_Percent is  " << Confidence_Percent << endl;*/
-
-	//------更新可信度和修正量----------
-	Correct_Par[0] = Confidence_Percent;
-	if (flag == 1)
-	{
-		Correct_Par[1] = -Value_Corct[0] * (Point[0] / Length);
-		Correct_Par[2] = -Value_Corct[0] * (Point[1] / Length);
-	}
-	else
-	{
-		Correct_Par[1] = 0;
-		Correct_Par[2] = 0;
-	}
-	Correct_Par[3] = Value_Corct[0];
-	Correct_Par[4] = Value_Corct[1];
-	Correct_Par[5] = Value_Corct[2];
-}
-
-/*
-*		File：	Yaw_Correct.cpp
-*
-*	程序内容：	通过测试飞盘落到近台上的情况，来尽量减小偏航角误差，因为近台数据测试情况比较稳定，可信度较高
-*   注		：	函数内外均采用角度为统一传递单位
-*				需要修改平台编号，Plat_Num 具体数值商榷
-*
-*	重要变量：
-*				Coe_Correct		修正比例
-*				Length			台子到发射点的距离，精确一点比较好，水平距离，不需要考虑z轴影响,cm精度
-*				Coe_Error		实际测量由于盘子误差导致的水平最大偏差和最小偏查的比例
-*				Radius_Max		用于防止盘子y方向偏移过大
-*`				Coe_Judge_Model	用于区分哪种修正的系数，之前单纯比较x y大小效果不是太好
-*/
-
-
-double rc17::Correction::Coe_Correct_2m = 0.42;
-double rc17::Correction::Coe_Correct_5m = 0.51;
-double rc17::Correction::Length_2m = 300;
-double rc17::Correction::Length_5m = 600;
-double rc17::Correction::Coe_Error = 1.3;
-double rc17::Correction::pi = 3.14159265;
-double rc17::Correction::Length_X_Min = 15;
-double rc17::Correction::Length_Y_Max = 20;
-double rc17::Correction::Length_Y_Min = -35;
-double rc17::Correction::Radius_Max = 20;
-double rc17::Correction::Coe_Judge_Model = 1.2;
-
-/*----------计算偏航角修正量-----------------
-*
-* 说明	：	Par_Input[0]	当前左右水平误差	cm
-*			Par_Input[1]	前后误差
-*			Par_Input[2]	平均误差			cm
-*			Par_Input[3]	累积修正值			角度
-*			Par_Input[4]	当前最大偏差值		角度
-*
-*			Par_Output[0]	当前修正值			角度
-*			Par_Output[3]	平均误差			cm
-*			Par_Output[1]	累积修正值			角度
-*			Par_Output[2]	当前最大偏差值		角度
-*		：
-*------------------------------------------*/
-void rc17::Correction::Yaw_Correct_My(double Length, double Coe_Correct, double Par_Input[], double Par_Output[])
-{
-	double Correct_Yaw;
-
-	//--是否第一次进入--
-	if (Par_Input[2] == 0)
-	{
-		Par_Input[2] = Par_Input[0];
-		Par_Output[3] = Par_Input[2];
-		Correct_Yaw = -atan(Par_Input[2] / Length) / pi * 180;
-		Par_Output[2] = Correct_Yaw;
-	}
-	else
-	{
-		Par_Input[2] = Par_Input[2] / 3 + Par_Input[0] * 2 / 3;
-		Par_Output[3] = Par_Input[2];
-		Correct_Yaw = -atan(Par_Input[2] / Length) / pi * 180;
-		if (abs(Correct_Yaw) > abs(Par_Input[4]))
-			Par_Input[4] = Correct_Yaw;
-	}
-
-	//--累积修正--
-	Par_Output[0] = Coe_Correct * Correct_Yaw;
-	Par_Output[1] = Par_Output[1] + Par_Output[0];
-
-	//--修正量自检--
-	if (abs(Par_Output[1]) > abs(Par_Output[2]) * Coe_Error)
-	{
-		Par_Output[1] = Par_Output[1] - Par_Output[0];
-		Par_Output[0] = 0;
-	}
-}
-
-
-
-/*----------对外承包函数---------------------
-*
-* 说明	：
-*		：
-*------------------------------------------*/
-void rc17::Correction::Yaw_Correct(int Plat_Num, double Par_Input[], double Par_Output[])
-{
-	switch (Plat_Num)
-	{
-	case 1:
-		rc17::Correction::Yaw_Correct_My(Length_2m, Coe_Correct_2m, Par_Input, Par_Output);	//近台
-		break;
-	case 4:
-		rc17::Correction::Yaw_Correct_My(Length_5m, Coe_Correct_5m, Par_Input, Par_Output);	//中台
-		break;
-	default:
-		break;
-	}
-}
-
-/*----------判断使用哪种修正函数-------------
-*
-* 说明	：
-*		：Plat_Num		平台编号
-*		：Point_Hit		落到台子上的位置坐标 [0] x [1] y
-*		：Flag			0 不需修正 1 Yaw全体修正  2 普通各自修正
-
-*------------------------------------------*/
-int rc17::Correction::Judge_Method(int Plat_Num, double Point_Hit[])
-{
-	int Flag = 0;
-	double Radius = 0;
-
-	//--落点到圆心半径--
-	Radius = sqrt(Point_Hit[0] * Point_Hit[0] + Point_Hit[1] * Point_Hit[1]);
-
-	//--近台--
-	if (Plat_Num == 1)
-	{
-		//--飞盘正常降落--
-		if (Radius < 37.5)
-		{
-			if (abs(Point_Hit[0]) < Length_X_Min)
-			{
-				Flag = 2;
-			}
-			else if (Point_Hit[1] > Length_Y_Max)
-			{
-				Flag = 2;
-			}
-			else
-			{
-				Flag = 1;
-			}
-		}
-		//--飞盘掉到台下--
-		else
-		{
-			if (abs(Point_Hit[0]) * Coe_Judge_Model > abs(Point_Hit[1]))
-			{
-				Flag = 1;
-			}
-			else
-				Flag = 2;
-		}
-	}
-	//--中台--
-	else if (Plat_Num == 4)
-	{
-		if (Radius < 50)
-			Flag = 2;
-		else
-			Flag = 1;
-	}
-	else
-	{
-		Flag = 2;
-	}
-
-	return Flag;
-}
-
-
-void rc17::Correction::calculate(int Plat_Num, double offsetX, double offsetZ, double correctX, double correctZ, double correctYaw)
-{
-	static double correctPoint1[6] = { 0.2, 0, 0, 0, 0, 0 };
-	static double Par_Input[5] = { 0 };
-	static double Par_Output[4] = { 0 };
-	static int whatMethodUsing = 1;
-
-	double offset[2] = { offsetX ,offsetZ };
-	offset[0] /= 10;
-	offset[1] /= 10;
-	int method = Judge_Method(Plat_Num + 1, offset);
-	if (method == 1)
-	{
-		Par_Input[0] = offset[0];
-		Par_Input[1] = offset[1];
-		Yaw_Correct(Plat_Num + 1, Par_Input, Par_Output);
-		Par_Input[2] = Par_Output[3];
-		Par_Input[3] = Par_Output[1];
-		Par_Input[4] = Par_Output[2];
-		correctX = 0;
-		correctZ = 0;
-		correctYaw = -Par_Output[0];
-		if (whatMethodUsing != 1)
-		{
-			//上次没用此方法时,初始化其他方法参数
-			whatMethodUsing = 1;
-			correctPoint1[0] = 0.2;
-			for (int i = 1; i < 6; i++)
-				correctPoint1[i] = 0;
-		}
-	}
-	else if (method == 2)
-	{
-		Correct_Point(correctPoint1, offset);
-		correctX = correctPoint1[1] * 10;
-		correctZ = correctPoint1[2] * 10;
-		correctYaw = 0;
-		if (whatMethodUsing != 2)
-		{
-			//上次没用此方法时,初始化其他方法参数
-			whatMethodUsing = 2;
-			for (int i = 0; i < 5; i++)
-				Par_Input[i] = 0;
-			for (int i = 0; i < 4; i++)
-				Par_Output[i] = 0;
-		}
-	}
 }
 
 void rc17::Correction::calculate2(int Plane_Num, float Correct_Par[], float Point[])
@@ -420,9 +132,9 @@ void Length_Coe_Cal(float Point[], const float Ideal_Point[], float Return[])
 	
 	/*Length = ( 25 + i ) * ( 25 + i);--for test*/
 	
-	if (Length > 6400)							//--为了防止传入的数据过大而炸掉
+	if (Length > 8100)							//--为了防止传入的数据过大而炸掉
 	{
-		Length = 6400;
+		Length = 8100;
 	}
 
 	Length_Bound = (Bound - sqrt(Length)) / 40;	//--为了高斯函数计算
@@ -460,16 +172,6 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 	float	Yaw1[4];
 	float	Pitch1[4];
 	int		Flag_Direction;
-
-	//--计算斜率--
-	if (Point[0] != 0)
-	{
-		Slope_Now = Point[1] / Point[0];
-	}
-	else
-	{
-		Slope_Now = Point[1];
-	}
 	
 	//--选取具体台子--
 	switch (Plane_Num)
@@ -483,19 +185,19 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 				break;
 
 		case 1:
-				Speed1[0] = 175 ;	Speed1[1] = -130;		Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = -80;	Speed2[1] = 75;		    Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] =-0.74 ;	Pitch1[1] = 1.27;		Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 0 ;	    Roll1[1] = 0;		    Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] =  -4;	    Yaw1[1] = 3;			Yaw1[2] = 0;		Yaw1[3] = 0;
+				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
 				break;
 
 		case 2:
-				Speed1[0] = 10;		Speed1[1] = -15;		Speed1[2] = 0;		Speed1[3] = 0;
-				Speed2[0] = -200;	Speed2[1] = 95;			Speed2[2] = 0;		Speed2[3] = 0;
-				Pitch1[0] = -1.82;	Pitch1[1] = 2.69;		Pitch1[2] = 0;		Pitch1[3] = 0;
-				Roll1[0] = 3.52;	Roll1[1] = 2.71;		Roll1[2] = 0;		Roll1[3] = 0;
-				Yaw1[0] = 2.9;		Yaw1[1] = -1.95;		Yaw1[2] = 0;		Yaw1[3] = 0;
+				Speed1[0] = 0;		Speed1[1] = 0;			Speed1[2] = 0;		Speed1[3] = 0;
+				Speed2[0] = 0;		Speed2[1] = 0;			Speed2[2] = 0;		Speed2[3] = 0;
+				Pitch1[0] = 0;		Pitch1[1] = 0;			Pitch1[2] = 0;		Pitch1[3] = 0;
+				Roll1[0] = 0;		Roll1[1] = 0;			Roll1[2] = 0;		Roll1[3] = 0;
+				Yaw1[0] = 0;		Yaw1[1] = 0;			Yaw1[2] = 0;		Yaw1[3] = 0;
 
 				break;
 
@@ -541,35 +243,20 @@ void Par_Init(int Plane_Num, float Point[], float Par_Coe[])
 
 	}
 	
-	//--判断具体方向并选取--方案一，用斜率
-	if ((Point[0] >= 0) && (Slope_Now >= Slope[0]) && (Slope_Now <= Slope[1]) )			//落点在右
-	{
-		Flag_Direction = 3;
-	}
-	else if ((Point[0] <= 0) && (Slope_Now >= Slope[0]) && (Slope_Now <= Slope[1]))		//落点在左
-	{	
-		Flag_Direction = 2;
-	}
-	else if (((Point[1] >= Limit_Y) && (Slope_Now <= Slope[0])) || ((Point[1] >= Limit_Y) && (Slope_Now >= Slope[1])))	//落点在前
-	{
-			Flag_Direction = 0;
-	}
-	else if (((Point[1] <= -Limit_Y) && (Slope_Now >= Slope[1])) || ((Point[1] <= -Limit_Y) && (Slope_Now <= Slope[0])))	//落点在后
-	{
-			Flag_Direction = 1;
-	}
-	else
-	{
-		if (Point[0] >= 0)
-			Flag_Direction = 3;
-		else
-			Flag_Direction = 2;
-	}
+    //--判断具体方向并选取--方案二 坐标y
+    if ((Point[1] >= 0))            //落点在前
+    {
+        Flag_Direction = 0;
+    }
+    else                            //落点在后
+    {
+        Flag_Direction = 1;
+    }
 
 	//--给具体参数赋值--
 	Par_Coe[0] = Pitch1[Flag_Direction];
 	Par_Coe[1] = Roll1[Flag_Direction];
-	Par_Coe[2] = static_cast<float>(atan(Point[0] / Point[2])) * 57.325 * Yaw_Coe + Yaw1[Flag_Direction];
+	Par_Coe[2] = static_cast<float>( atan((Point[0] - 10) / Point[2]) * 57.325 * Yaw_Coe);
 	Par_Coe[3] = Speed1[Flag_Direction];
 	Par_Coe[4] = Speed2[Flag_Direction];
 	
@@ -588,14 +275,14 @@ float Check_Number(int Choice, float Correct_Par)
 	if (Choice == 0)
 	{
 
-		if (Correct_Par > 23)
+		if (Correct_Par > 5)
 		{
-			Correct_Par = 23;
+			Correct_Par = 5;
 		}
 		else
-			if (Correct_Par < -23)
+			if (Correct_Par < -5)
 			{
-				Correct_Par = -23;
+				Correct_Par = -5;
 			}
 	}
 	else if (Choice == 1)
@@ -648,7 +335,7 @@ void Fliter_Output(float Correct_Par[])
 *		：错误为1
 		：Confidence_Limit 可信度的，另一个应用，来判断是否需要启动最优值
 *------------------------------------------*/
-void Check_CorrectPar(int Plane_Num, float Correct_Par[],float Ponit[] )
+void Check_CorrectPar(int Plane_Num, float Correct_Par[] )
 {
 	int i;
 	int j;
@@ -716,11 +403,6 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[],float Ponit[] )
 				Correct_BestDelta[Plane_Num + 1][j] = 0;	
 			}
 			
-			//-----直接操控俯仰角进行变化-------
-			if ( Ponit[1] > 0 )
-				Correct_Par[1] = Correct_Par[1] - 2 ;
-			else
-				Correct_Par[1] = Correct_Par[1] + 2 ;
 		}
 	}
 }
@@ -734,7 +416,7 @@ void Check_CorrectPar(int Plane_Num, float Correct_Par[],float Ponit[] )
 *		：
 
 *------------------------------------------*/
-void StateBest_Check(int Plane_Num,float  Correct_Par[],float Length_Now)
+int  StateBest_Check(int Plane_Num,float  Correct_Par[],float Length_Now)
 {
 	//int Good_LengthMin = 30;
 	int i;
@@ -743,22 +425,105 @@ void StateBest_Check(int Plane_Num,float  Correct_Par[],float Length_Now)
 	{
 		if (Length_Now < Correct_BestDelta[0][1])		//--更新最优状态
 		{
+			Correct_Par[0] = Correct_Par[0] - 0.2;
 			Correct_BestDelta[0][1] = Length_Now;
 			for (i = 0; i < 5; i++)
 			{
 				Correct_BestDelta[Plane_Num+1][i] = Correct_DeltaAll[Plane_Num][i];
 			}
+			return 1;
 		}
+		
+		return 0;
 	}
 	else
 	{
 		Correct_BestDelta[0][1] = Length_Now;
-		Correct_BestDelta[0][0] = Plane_Num;
+		return 0;
 	}
 }
 
 
 
+
+/*3----------盘子状态检查----------------------3
+*
+* 说明	：	减小毒盘子的影响，对于两个相邻盘子之间的误差进行判断
+*		：	Disk_OldState[0] == -1   进入判断时期
+*		：	0 毒盘子
+			1 正常盘子
+*------------------------------------------*/
+int  Disk_Check(int Plane_Num, float  Correct_Par[], float Point[])
+{
+	//int Good_LengthMin = 30;
+	int i;
+	int Distance_Safe = 75;
+	double Distance_Between;
+	double Distance_Between_1;
+
+	Distance_Between = (Point[0] - Disk_OldState[1]) *  (Point[0] - Disk_OldState[1]) + (Point[1] - Disk_OldState[2]) *  (Point[1] - Disk_OldState[2]);
+	Distance_Between = sqrt(Distance_Between);
+		
+		
+	if (Plane_Num == Correct_BestDelta[0][0])				//--检查是否台子变化--
+	{
+		if (Disk_OldState[0] == -1)							//--当前为判断状态
+		{
+			Distance_Between_1 = (Point[0] - Disk_OldState[3]) *  (Point[0] - Disk_OldState[3]) + (Point[1] - Disk_OldState[4]) *  (Point[1] - Disk_OldState[4]);
+			Distance_Between_1 = sqrt(Distance_Between_1);
+			
+			if ((Distance_Between_1 < 50) || (Distance_Between < 50))
+			{
+				Disk_OldState[1] = Point[0];
+				Disk_OldState[2] = Point[1];
+				
+				//--更新标志位--
+				Disk_OldState[0] = 1;
+				return 1;
+			}
+			else
+				return 0;
+		}
+		
+		if (Distance_Between < Distance_Safe)				//--是正常盘子--
+		{
+				Disk_OldState[0] = Disk_OldState[0] + 1;
+				Disk_OldState[1] = Point[0];
+				Disk_OldState[2] = Point[1];
+
+				return 1;
+		}
+		else
+		{
+			if (Disk_OldState[0] > 2)						//--已经有正常盘子--
+				return 0;
+			else
+			{
+				Disk_OldState[0] = -1;						//--没有已经确认的正常盘子--
+				Disk_OldState[3] = Point[0];
+				Disk_OldState[4] = Point[1];
+			}
+		}
+	}
+	else
+	{
+		if (Distance_Between < 80 )							//--避免第一个盘子炸机--
+		{
+		Disk_OldState[1] = Point[0];
+		Disk_OldState[2] = Point[1];
+		Disk_OldState[0] = 0;
+		Correct_BestDelta[0][0] = Plane_Num;
+		
+		return 1;
+		}
+			
+		Disk_OldState[0] = 0;
+		Correct_BestDelta[0][0] = Plane_Num;
+		
+		return 0;
+	}		
+}    		
+     		
 
 /*----------计算偏航修正量大小------------临时函数
 * Turtle
@@ -784,83 +549,102 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 	float Confidence_Percent;
 	float Length_ToCenter;
 	float P_Gauss_G;
-	const float P_Gauss_Flag= 0.18f;					//--对应30cm
+	const float P_Gauss_Flag = 0.18f;					//--对应30cm
 	const float Correct_Max = 0.9f;
 	float Percent_Gau;
 	const float Ideal_Point[2] = { 0, 0 };
 	float Value_Corct[2] = { Correct_Par[6], Correct_Par[7] };
 	float Return[3] = { 0, 0, 0 };
-	float Par_Coe[5] = { 0, 0, 0, 0 ,0 };
-	int flag;
+	float Par_Coe[5] = { 0, 0, 0, 0, 0 };
+	int Flag_Change = 0;
+	int Flag_BestState = 0;
+	int Flag_DiskState = 0;
+	//------盘子优劣检查---
+	Flag_DiskState = Disk_Check(Plane_Num, Correct_Par, Point);
 
-	//------可信度赋值-----
-	Confidence_Percent = Correct_Par[0];
-
-	
-	//-------读取相应的修正参数-----
-	Par_Init(Plane_Num, Point, Par_Coe);
-	
-	
-	//------计算距离和高斯分布概率、修正系数-----
-	Point[3] = Par_Coe[2] * Confidence_Percent;
-	Length_Coe_Cal( Point , Ideal_Point , Return );	
-	Length_ToCenter = Return[0];
-	P_Gauss_G = Return[1];
-	Percent_Gau = Return[2];
-
-
-	//------更新最优状态---
-	StateBest_Check(Plane_Num, Correct_Par, Length_ToCenter);
-
-
-	//------判断是否需要修正以及相应修正量-----
-	if (P_Gauss_G > P_Gauss_Flag)  
+	if (Flag_DiskState == 1)
 	{
-		flag = 1;
-
-		Value_Corct[1] = Value_Corct[0];
-		Value_Corct[0] = Percent_Gau ;
+		//------可信度赋值-----
+		Confidence_Percent = Correct_Par[0];
 		
-		if ( ( Value_Corct[0] - Value_Corct[1] ) > 0.3 )				//-- 一次限幅
+		
+		//-------读取相应的修正参数-----
+		Par_Init(Plane_Num, Point, Par_Coe);
+
+
+		//------计算距离和高斯分布概率、修正系数-----
+		Point[3] = Par_Coe[2] * Confidence_Percent;
+		Length_Coe_Cal(Point, Ideal_Point, Return);
+
+		Length_ToCenter = Return[0];
+		P_Gauss_G = Return[1];
+		Percent_Gau = Return[2];
+
+
+		//------更新最优状态---
+		Flag_BestState = StateBest_Check(Plane_Num, Correct_Par, Length_ToCenter);
+
+
+		//------判断是否需要修正以及相应修正量-----
+		if (P_Gauss_G > P_Gauss_Flag)
 		{
-			Value_Corct[0] =( Value_Corct[1] * + Value_Corct[0] * 0.7f );
+			Flag_Change = 1;
+
+			Value_Corct[1] = Value_Corct[0];
+			Value_Corct[0] = Percent_Gau;
+
+
+			Value_Corct[0] = (Value_Corct[1] * 0.2f + Value_Corct[0] * 0.8f);
+
+
+			if (Value_Corct[0] > Correct_Max)                               //-- 二次限幅
+			{
+				Value_Corct[0] = Correct_Max;
+			}
+		}
+		else
+		{
+			Value_Corct[1] = Value_Corct[0];
+			Value_Corct[0] = 0;
 		}
 
-		if (Value_Corct[0] > Correct_Max)								//-- 二次限幅
+		//------程序测试用---------
+		/*cout << "the input point_x is " << Point[0] << "  the input point_y is  " << Point[1] << endl;
+		cout << " the Confidence_Percent is  " << Confidence_Percent << endl;*/
+
+		//------更新可信度----------
+
+		if ((Flag_BestState == 1) && (Length_ToCenter < 40))
 		{
-			Value_Corct[0] = Correct_Max;
+			Confidence_Percent = Confidence_Percent - 0.2; 					//奖励最优状态的更新	
+		}
+
+		if (Length_ToCenter < 35)
+		{
+			Confidence_Percent = Confidence_Percent - P_Gauss_G * 1.5;      //信任度修改 -> 正常情况
+
+			if (Confidence_Percent < 0.03f)                                 //--信任度限幅
+				Confidence_Percent = 0.03f;
+		}
+		else
+		{
+			Confidence_Percent = Confidence_Percent + P_Gauss_G * 4 / 11;       //--信任度修改->减小信任度
+			//( P_Gauss * 10 ) / Length_Bound
+
+			if (Confidence_Percent > 0.97f)                                 //--信任度限幅
+				Confidence_Percent = 0.97f;
 		}
 	}
 	else
 	{
-		Value_Corct[1] = Value_Corct[0];
-		Value_Corct[0] = 0;
-	}
-
-	//------程序测试用---------
-	/*cout << "the input point_x is " << Point[0] << "  the input point_y is  " << Point[1] << endl;
-	cout << " the Confidence_Percent is  " << Confidence_Percent << endl;*/
-
-	//------更新可信度----------
-	if (Length_ToCenter < 35)
-	{
-		Confidence_Percent = Confidence_Percent - P_Gauss_G  / 2;		//信任度修改 -> 正常情况
-
-		if (Confidence_Percent < 0.03f)									//--信任度限幅
-			Confidence_Percent = 0.03f;
-	}
-	else
-	{
-		Confidence_Percent = Confidence_Percent + P_Gauss_G *4 / 11;		//--信任度修改->减小信任度
-		//( P_Gauss * 10 ) / Length_Bound
-
-		if (Confidence_Percent > 0.97f)									//--信任度限幅
-			Confidence_Percent = 0.97f;
+		Flag_Change = 0;
 	}
 
 	//------更新修正量----------
-	if (flag == 0) //防止上面赋0-float出错
+	if (Flag_Change == 0) //防止上面赋0-float出错
 	{
+		if (Flag_DiskState == 1)
+			Correct_Par[0] = Confidence_Percent;
 		Correct_Par[1] = 0;
 		Correct_Par[2] = 0;
 		Correct_Par[3] = 0;
@@ -869,6 +653,7 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 	}
 	else
 	{
+		Correct_Par[0] = Confidence_Percent;
 		Correct_Par[1] = Confidence_Percent * Percent_Gau * Par_Coe[0];
 		Correct_Par[2] = Confidence_Percent * Percent_Gau * Par_Coe[1];
 		Correct_Par[3] = Confidence_Percent * Par_Coe[2];
@@ -877,12 +662,13 @@ void rc17::Correction::Correct_Point(int Plane_Num, float Correct_Par[], float P
 		/*Correction_Yaw(Plane_Num, Correct_Par, Point);*/
 	}
 
-	Check_CorrectPar(Plane_Num, Correct_Par, Point);//---检测是否修正有错误并改到最优
+	Check_CorrectPar(Plane_Num, Correct_Par);//---检测是否修正有错误并改到最优
 
-	Correct_Par[0] = Confidence_Percent;
 	Correct_Par[6] = Value_Corct[0];
 	Correct_Par[7] = Value_Corct[1];
-	
-	//-----输出值滤波------------
+
 	Fliter_Output(Correct_Par);
 }
+		
+		
+		

@@ -178,8 +178,8 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				tmpOffset.x = offset[0];
 				tmpOffset.y = offset[1];
 					
-				rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, CameraVar::cameraRotate);
-				cout << " xÆ«²î: " << setw(2) << rotatedOffset.x << " zÆ«²î: " << setw(2) << rotatedOffset.y << endl;
+				rotatedOffset = rc17::CoorTransform::rotateVector(tmpOffset, 0/*CameraVar::cameraRotate*/);
+				//cout << " xÆ«²î: " << setw(2) << rotatedOffset.x << " zÆ«²î: " << setw(2) << rotatedOffset.y << endl;
 				//Ðý×ªµ½ÔÆÌ¨·½ÏòÆ«²î
 
 				//double tmpx, tmpz, tmpyaw;
@@ -189,7 +189,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				float* rtOffset = new float[4];
 				rtOffset[0] = rotatedOffset.x;
 				rtOffset[1] = rotatedOffset.y;
-				rtOffset[2] = PillarVar::worldCoor.z/10;
+				rtOffset[2] = PillarVar::worldCoor.z;
 
 				//cin >> rtOffset[0];
 				//cin >> rtOffset[1];
@@ -208,6 +208,8 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				datafile << "·ÉÅÌ" << regionVector[i].getSaucerIndex() << "²É¼¯µãÌ«ÉÙ»òÕßÊÇÔÓÎï" << endl;
 			else if (trackSuccess == 2)
 				datafile << "·ÉÅÌ" << regionVector[i].getSaucerIndex() << "¹ýÔç¸ú¶ª" << endl;
+			else if (trackSuccess == 4)
+				datafile << "·ÉÅÌ" << regionVector[i].getSaucerIndex() << "ÊÇ¸ô±ÚÄ¦²ÁÂÖ´òµÄ" << endl;
 			datafile << "·ÉÅÌ" << regionVector[i].getSaucerIndex() << " ÒÑ¶ªÊ§£¡" << std::endl << std::endl;
 			regionVector.erase(regionVector.begin() + i);
 

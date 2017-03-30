@@ -89,6 +89,7 @@ void rc17::Correction::calculate2(int Plane_Num, float Correct_Par[], float Poin
 	}
 	Point[0] = Point[0] / 10;
 	Point[1] = Point[1] / 10;
+	Point[2] = Point[2] / 10;
 	Correct_Point(Plane_Num, par, Point);
 
 	lastPlaneNum = Plane_Num;

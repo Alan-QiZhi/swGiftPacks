@@ -5,7 +5,6 @@
 #include "RegionDetector.h"
 #include "Protocol.h"
 #include <iomanip>
-
 using namespace HalconCpp;
 bool rc17::Execute::init()
 {
@@ -49,10 +48,14 @@ void rc17::Execute::run(HObject _depthImage)
 		<< "   expect coor:  " << PillarVar::pillarLocRow[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << "   " << PillarVar::pillarLocCol[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << endl;
 
 	//获得柱子的世界坐标
-	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) {
+	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) 
+	{
 		PillarVar::worldCoor = CameraVar::getWorldCoor(PillarVar::pixelCoor.row, PillarVar::pixelCoor.column);
 		//cout << "worldCoorZ: " << PillarVar::worldCoor.z << endl;
 	}
+
+
+
 	//追踪飞盘(没有球的时候)
 	if (PillarState::hasBall() == false)
 	{
@@ -140,10 +143,6 @@ void rc17::Execute::setCameraParam()
 	CameraVar::cameraParam.pitch = 18.3;
 }
 
-void rc17::Execute::getPillarCoor()
-{
-	PillarVar::worldCoor = PillarState::getPillarCoor();
-}
 
 void rc17::Execute::saucerTrack()
 {

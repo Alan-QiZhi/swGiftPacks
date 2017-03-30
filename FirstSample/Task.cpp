@@ -13,6 +13,11 @@ void rc17::Correct()
 	{
 		if(ThreadFlag::t_Num > 0)
 		{
+			if (PillarVar::waitUnderpan)
+			{
+				this_thread::sleep_for(chrono::milliseconds(700));
+				PillarVar::waitUnderpan = false;
+			}
 			if (PillarState::hasBall() == true)
 			{
 				cout << "ball" << endl;
@@ -23,8 +28,15 @@ void rc17::Correct()
 				readyToShoot = PillarState::lockPillar(PillarState::NoBall);
 			}
 
-			if (readyToShoot == true && ThreadFlag::t_Num != 2)//发射状态,非云台调整状态
+			if (readyToShoot == true/* && ThreadFlag::t_Num != 2*/)//发射状态,非云台调整状态
 			{
+				if (PillarState::hasBall() == true)//如果底盘一次到位，等待摩擦轮
+					this_thread::sleep_for(chrono::milliseconds(1000));
+				else
+					this_thread::sleep_for(chrono::milliseconds(1000));
+				if (PillarVar::waitUnderpan)
+					continue;//在以上延迟时如果切换台子
+
 				if (PillarState::hasBall() == true)
 					Protocol::sendCmd(Protocol::BallPara);
 				else
@@ -33,14 +45,14 @@ void rc17::Correct()
 				Protocol::sendCmd(Protocol::Shoot);
 
 				if (PillarState::hasBall() == true)
-					this_thread::sleep_for(chrono::milliseconds(3000));//打球的延时大一些
+					this_thread::sleep_for(chrono::milliseconds(1400));//打球的延时大一些
 				else
-					this_thread::sleep_for(chrono::milliseconds(3000));//等一发飞盘发射完毕
+					this_thread::sleep_for(chrono::milliseconds(1400));//等一发飞盘发射完毕
 				continue;
 			}
 		}
-		//500ms 执行一次
-		this_thread::sleep_for(chrono::milliseconds(500));
+		//650ms 执行一次
+		this_thread::sleep_for(chrono::milliseconds(650));
 	}
 }
 

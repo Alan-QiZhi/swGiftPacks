@@ -239,6 +239,9 @@ int rc17::FindRegion::getOffset(double offset[2])
 		(regionTrack[index2].y - (regionTrack[index1].y));
 	ratioThree[2] = (regionTrack[index2].z - regionTrack[index0].z) /
 		(regionTrack[index2].y - regionTrack[index0].y);
+
+	if ((regionTrack[index2].z - regionTrack[index0].z) > 0)//B发射机构打出的盘子(从右向左飞行)
+		return 4;
 	for (int i = 0; i < 3; i++)
 	{
 		if (ratioThree[i] > 4)

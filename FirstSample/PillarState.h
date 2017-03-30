@@ -25,7 +25,6 @@ namespace rc17
 			WithBall = 0,
 			NoBall
 		};
-		static Coor3D getPillarCoor();
 		static Coor2D getPillarPixel();
 		static bool lockPillar(int type);
 		static bool hasBall();

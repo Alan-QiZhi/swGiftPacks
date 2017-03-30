@@ -13,7 +13,6 @@ namespace rc17
 		static void initSerialPort();
 		static void initSocket();
 		static void setCameraParam();
-		static void getPillarCoor();
 		static void saucerTrack();
 	};
 }

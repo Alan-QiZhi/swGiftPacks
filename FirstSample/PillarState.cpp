@@ -74,20 +74,6 @@ rc17::Coor3D rc17::PillarState::middleFilter(Coor3D pillarCoor)
 	return resultCoor;
 }
 
-rc17::Coor3D rc17::PillarState::getPillarCoor()
-{
-	Coor2D pillarPixel = getPillarPixel();
-# ifdef USESOCKET
-	//char tmp[3] = { 0xaa, 0xbb, pillarPixelColumn - pillarColumn };
-	//send(sockClient, tmp, 3, 0);
-# endif
-	if(pillarPixel.row == -1)
-		return Coor3D::empty();
-	Coor3D pillarCoor = CameraVar::getWorldCoor(pillarPixel.row, pillarPixel.column);
-	//中值滤波
-	pillarCoor = middleFilter(pillarCoor);
-	return pillarCoor;
-}
 
 rc17::Coor2D rc17::PillarState::getPillarPixel()
 {
@@ -181,7 +167,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 
 bool rc17::PillarState::lockPillar(int type)
 {
-	const int thresL = 3;
+	const int thresL = 4;
 	const int thresH = 128;
 	int pixelOffset = 0;
 	int cmd = 0;
@@ -209,7 +195,7 @@ bool rc17::PillarState::lockPillar(int type)
 
 	if (abs(pixelOffset) > thresL && abs(pixelOffset) < thresH)
 	{
-		double kP = 0.7;
+		double kP = 0.8;
 		double kI = 0.0;
 		double kD = 0;
 
@@ -217,7 +203,7 @@ bool rc17::PillarState::lockPillar(int type)
 		static int lastPixel = PillarVar::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
 		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVar::pixelCoor.column);
-		cout << yawToFix << endl;
+		//cout << yawToFix << endl;
 		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		
 		if (Protocol::correctPara[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7].haveDataNum != 0)//捎带发送上次修正值

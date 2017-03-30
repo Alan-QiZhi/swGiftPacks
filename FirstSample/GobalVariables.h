@@ -52,6 +52,7 @@ namespace rc17
 		static const int pillarConfidence[7];
 		//ÒÑ½ÃÕýµÄYaw
 		static double correctedYaw[14];
+		static bool waitUnderpan;
 	};
 
 	class ComVar

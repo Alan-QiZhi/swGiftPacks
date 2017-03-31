@@ -382,8 +382,6 @@ void rc17::MySerial::receive(const int data_len)
 						CameraVar::receiveX = -(receData[2] * 256 + receData[3] - 20000);
 						CameraVar::receiveY = receData[4] * 256 + receData[5] - 20000;
 						CameraVar::receiveAngle = (receData[6] * 256 + receData[7] - 10000) / 100.0;
-						if (!(((receData[9] - 1) % 7) == PillarVar::index))
-							rc17::PillarVar::waitUnderpan = true;
 						//if (receData[9] > 7) receData[9] = receData[9] - 7;
 						rc17::PillarVar::index = ((int)receData[9] - 1)>= 0? ((int)receData[9] - 1):0;
 						ThreadFlag::t_Num = receData[10];

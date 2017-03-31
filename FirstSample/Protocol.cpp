@@ -166,27 +166,23 @@ void rc17::Protocol::send7bytes(int type, float data, float data2)
 	unsigned char bytesToSend[7];
 	bytesToSend[0] = 0xf0;
 	bytesToSend[1] = static_cast<char>(type);
+	char* bytes = BitConverter::GetBytes(static_cast<int16_t>(data));
+	char* bytes2 = BitConverter::GetBytes(static_cast<int16_t>(data2));
+	char* bytesf = BitConverter::GetBytes(data);
 	switch (type)
 	{
 	case SPEED_SEM:
-		char* bytes = BitConverter::GetBytes(static_cast<int16_t>(data));
 		bytesToSend[2] = bytes[0];
 		bytesToSend[3] = bytes[1];
-		delete[] bytes;
-
-		char* bytes2 = BitConverter::GetBytes(static_cast<int16_t>(data2));
 		bytesToSend[4] = bytes2[0];
 		bytesToSend[5] = bytes2[1];
-		delete[] bytes2;
 		break;
 	case YAW_SEM:
 	case PITCH_SEM:
-		char* bytesf = BitConverter::GetBytes(data);
 		bytesToSend[2] = bytesf[0];
 		bytesToSend[3] = bytesf[1];
 		bytesToSend[4] = bytesf[2];
 		bytesToSend[5] = bytesf[3];
-		delete[] bytesf;
 		break;
 	default:
 		cerr << "错误： 无法识别的指令";
@@ -195,6 +191,9 @@ void rc17::Protocol::send7bytes(int type, float data, float data2)
 
 	bytesToSend[6] = 0x0f;
 	ComVar::serialPort.send(bytesToSend, 7);
+	delete[] bytes;
+	delete[] bytes2;
+	delete[] bytesf;
 }
 
 

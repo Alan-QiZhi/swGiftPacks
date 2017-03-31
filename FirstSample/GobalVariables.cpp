@@ -51,7 +51,6 @@ double rc17::PillarVar::correctedYaw[14]
 {
 	0, 0, 0, 0, 0, 0, 0
 };
-bool rc17::PillarVar::waitUnderpan = false;//在切换台子的瞬间等待底盘调整到位
 
 rc17::MySerial rc17::ComVar::serialPort;
 rc17::SocketClient rc17::ComVar::mySocketClient;

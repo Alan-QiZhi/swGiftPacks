@@ -27,7 +27,7 @@ rc17::Coor3D rc17::CameraVar::getWorldCoor(double _row, double _column)
 
 rc17::Coor3D rc17::PillarVar::worldCoor = Coor3D();
 rc17::Coor2D rc17::PillarVar::pixelCoor = Coor2D();
-int rc17::PillarVar::index = -2;
+int rc17::PillarVar::index = 6;
 
 int const rc17::PillarVar::pillarLocCol[14]
 { 
@@ -37,8 +37,8 @@ int const rc17::PillarVar::pillarLocCol[14]
 
 int const rc17::PillarVar::pillarBallCol[14]
 {
-	-128,253,274,270,275,295,284
-	-128,-128,-128,-128,-128,-128,-128//车在B(9000)(以车面向为正方向的右)的数据
+	426,467,426,404,-128,-128,460,
+	383,-128,-128,388,405,-128,474//车在B(9000)(以车面向为正方向的右)的数据
 };
 
 int const rc17::PillarVar::pillarLocRow[14]

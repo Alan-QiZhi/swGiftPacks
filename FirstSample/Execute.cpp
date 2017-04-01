@@ -43,10 +43,15 @@ void rc17::Execute::run(HObject _depthImage)
 	setCameraParam();
 	/****************************************摄像头修正***************************************/
 	PillarVar::pixelCoor = PillarState::getPillarPixel();
-	if(ThreadFlag::flags[3])
-		cout << "pillar coor:  " << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column 
-		<< "   expect coor:  " << PillarVar::pillarLocRow[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << "   " << PillarVar::pillarLocCol[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << endl;
-
+	if (ThreadFlag::flags[3])
+	{
+		if (PillarState::hasBall() == true)
+			cout << "pillar coor:  " << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column
+			<< "   expect coor:  " << PillarVar::pillarLocRow[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << "   " << PillarVar::pillarBallCol[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << endl;
+		else
+		cout << "pillar coor:  " << PillarVar::pixelCoor.row << "   " << PillarVar::pixelCoor.column
+			<< "   expect coor:  " << PillarVar::pillarLocRow[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << "   " << PillarVar::pillarLocCol[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] << endl;
+	}
 	//获得柱子的世界坐标
 	if (PillarVar::pixelCoor.row > 0 && PillarVar::pixelCoor.column > 0) 
 	{

@@ -203,7 +203,7 @@ bool rc17::PillarState::lockPillar(int type)
 		static int lastPixel = PillarVar::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
 		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVar::pixelCoor.column);
-		//cout << yawToFix << endl;
+		cout << yawToFix << endl;
 		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		
 		if (Protocol::correctPara[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7].haveDataNum != 0)//捎带发送上次修正值
@@ -225,7 +225,7 @@ bool rc17::PillarState::lockPillar(int type)
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-/*	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
-		return true;*/	
+	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
+		return true;	
 	return false;
 }

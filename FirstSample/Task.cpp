@@ -7,8 +7,7 @@
 void rc17::Correct()
 {
 	
-	bool readyToShoot = true;
-	bool LastHadBall = false;
+	bool readyToShoot = false;
 	while(ThreadFlag::run)
 	{
 		if(ThreadFlag::t_Num > 0)
@@ -26,14 +25,20 @@ void rc17::Correct()
 			if (readyToShoot == true && ThreadFlag::t_Num != 2)//发射状态,非云台调整状态
 			{
 				if (PillarState::hasBall() == true)
+				{
+					cout << "有球发射" << endl;
 					Protocol::sendCmd(Protocol::BallPara);
+				}
 				else
+				{
+					cout << "没球发射" << endl;
 					Protocol::sendCmd(Protocol::NoBallPara);
+				}
 				this_thread::sleep_for(chrono::milliseconds(50));
 				Protocol::sendCmd(Protocol::Shoot);
 
 				if (PillarState::hasBall() == true)
-					this_thread::sleep_for(chrono::milliseconds(1400));//打球的延时大一些
+					this_thread::sleep_for(chrono::milliseconds(2400));//打球的延时大一些
 				else
 					this_thread::sleep_for(chrono::milliseconds(1400));//等一发飞盘发射完毕
 				continue;
@@ -151,7 +156,7 @@ void rc17::keyCmd()
 							<< "   worldCoor.x:" << PillarVar::worldCoor.x << "   worldCoor.y:" << PillarVar::worldCoor.y
 							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
 							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column  << "   index:" << PillarVar::index << endl;
-						cout << "seriel send flag: " << ThreadFlag::flags[5] << endl;
+						cout << "seriel send flag: " << (int)ThreadFlag::t_Num << endl;
 						cout << endl;
 						continue;
 					}

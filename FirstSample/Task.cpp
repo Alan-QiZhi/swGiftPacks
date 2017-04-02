@@ -6,7 +6,6 @@
 
 void rc17::Correct()
 {
-	
 	bool readyToShoot = false;
 	while(ThreadFlag::run)
 	{
@@ -45,7 +44,7 @@ void rc17::Correct()
 			}
 		}
 		//650ms Ö´ÐÐÒ»´Î
-		this_thread::sleep_for(chrono::milliseconds(650));
+		this_thread::sleep_for(chrono::milliseconds(300));
 	}
 }
 
@@ -156,7 +155,7 @@ void rc17::keyCmd()
 							<< "   worldCoor.x:" << PillarVar::worldCoor.x << "   worldCoor.y:" << PillarVar::worldCoor.y
 							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
 							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column  << "   index:" << PillarVar::index << endl;
-						cout << "seriel send flag: " << (int)ThreadFlag::t_Num << endl;
+						cout << "t_Num: " << (int)ThreadFlag::t_Num << endl;
 						cout << endl;
 						continue;
 					}

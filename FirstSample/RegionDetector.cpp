@@ -198,7 +198,7 @@ std::vector<HObject> rc17::RegionDetector::RegionsFound(HObject &Image)
 				Correction::calculate2(PillarVar::index, Correct_Par, rtOffset);
 				//CorrectParam::assign(Correct_Par);
 				//Protocol::correctPara[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7].assign(Correct_Par);
-				PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] += Correct_Par[3];
+				//PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7] += Correct_Par[3];
 				cout << "   " << Correct_Par[0] << "   " << Correct_Par[1] << "   " << Correct_Par[2] << "   " <<
 					Correct_Par[3] << "   " << Correct_Par[4] << "   " << Correct_Par[5] << "   " << endl;
 				delete[] Correct_Par;

@@ -167,7 +167,7 @@ rc17::Coor2D rc17::PillarState::getPillarPixel()
 
 bool rc17::PillarState::lockPillar(int type)
 {
-	const int thresL = 4;
+	const int thresL = 120;
 	const int thresH = 128;
 	int pixelOffset = 0;
 	int cmd = 0;
@@ -183,7 +183,7 @@ bool rc17::PillarState::lockPillar(int type)
 	case NoBall:
 	{
 		pixelOffset = PillarVar::pillarLocCol[PillarIndex(CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7)]
-			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7]/57.0*640;
+			- PillarVar::pixelCoor.column + PillarVar::correctedYaw[CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7]/53.3*640;
 		cmd = Protocol::NoBallPara;
 		break;
 	}
@@ -202,7 +202,7 @@ bool rc17::PillarState::lockPillar(int type)
 		static int pixelOffsetSum = 0;
 		static int lastPixel = PillarVar::pixelCoor.column;
 		pixelOffsetSum += pixelOffset;
-		double yawToFix = kP * (pixelOffset / 640. * 57.) + kI * pixelOffsetSum + kD * (lastPixel - PillarVar::pixelCoor.column);
+		double yawToFix = kP * (pixelOffset / 640. * 53.3) + kI * pixelOffsetSum + kD * (lastPixel - PillarVar::pixelCoor.column);
 		cout << yawToFix << endl;
 		lastPixel = PillarVar::pixelCoor.column;
 #ifdef USESERIALPORT		

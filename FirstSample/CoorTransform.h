@@ -58,7 +58,7 @@ namespace rc17
 		static Coor3D rotateVector(const Coor3D& origin, const float& rotateAngel);
 	private:
 		static const int HEIGHT = 480, WIDTH = 640;
-		static const int HFOV = 57, VFOV = 42;
+		static const int HFOV = 53.3, VFOV = 42;
 		static bool isInScreen(const double& Row, const double& Column);
 	};
 }

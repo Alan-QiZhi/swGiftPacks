@@ -253,6 +253,7 @@
     <ClInclude Include="SocketClient.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Task.h" />
+    <ClInclude Include="timeorder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoorTransform.cpp" />
@@ -268,6 +269,7 @@
     <ClCompile Include="RegionDetector.cpp" />
     <ClCompile Include="SocketClient.cpp" />
     <ClCompile Include="Task.cpp" />
+    <ClCompile Include="timeorder.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,7 +13,7 @@ void rc17::Correct()
 		{
 			if (PillarState::hasBall() == true)
 			{
-				cout << "ball" << endl;
+				//cout << "ball" << endl;
 				readyToShoot = PillarState::lockPillar(PillarState::WithBall);
 			}
 			else
@@ -25,12 +25,12 @@ void rc17::Correct()
 			{
 				if (PillarState::hasBall() == true)
 				{
-					cout << "有球发射" << endl;
+					//cout << "有球发射" << endl;
 					Protocol::sendCmd(Protocol::BallPara);
 				}
 				else
 				{
-					cout << "没球发射" << endl;
+					//cout << "没球发射" << endl;
 					Protocol::sendCmd(Protocol::NoBallPara);
 				}
 				this_thread::sleep_for(chrono::milliseconds(50));
@@ -129,7 +129,7 @@ void rc17::keyCmd()
 		cout << "ctrl + 5:serial send state switch" << endl << endl;
 	};
 	help();
-	bool keyState[10];
+	bool keyState[10] = { 0 };
 	while (ThreadFlag::run)
 	{
 		while (GetKeyState(VK_CONTROL) < 0)//ctrl按下
@@ -137,7 +137,7 @@ void rc17::keyCmd()
 			for (int i = 0; i < sizeof(keyState); i++)
 				if(GetKeyState(i + 48) >= 0)
 					keyState[i] = GetKeyState(i + 48);//记录数字键up or down的状态
-			Sleep(20);
+			Sleep(30);
 			for (int i = 0; i < sizeof(keyState); i++)
 				if (GetKeyState(i + 48) >= 0 && !(GetKeyState(i + 48) == keyState[i]))//如果状态切换更新状态和flag
 				{
@@ -154,7 +154,8 @@ void rc17::keyCmd()
 						cout << "PillarVar:" << endl
 							<< "   worldCoor.x:" << PillarVar::worldCoor.x << "   worldCoor.y:" << PillarVar::worldCoor.y
 							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
-							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column  << "   index:" << PillarVar::index << endl;
+							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column << endl << "   index:" << PillarVar::index
+							<< "   AshootIndex:" << PillarVar::AshootingIndex << "   BshootIndex:" << PillarVar::BshootingIndex << endl;
 						cout << "t_Num: " << (int)ThreadFlag::t_Num << endl;
 						cout << endl;
 						continue;
@@ -166,6 +167,21 @@ void rc17::keyCmd()
 							cout << "serial send:enable" << endl;
 						else
 							cout << "serial send:disable" << endl;
+				}
+		}
+
+		while (GetKeyState(VK_TAB) < 0)//ctrl按下
+		{
+			for (int i = 0; i < sizeof(keyState); i++)
+				if (GetKeyState(i + 48) >= 0)
+					keyState[i] = GetKeyState(i + 48);//记录数字键up or down的状态
+			Sleep(30);
+			for (int i = 0; i < sizeof(keyState); i++)
+				if (GetKeyState(i + 48) >= 0 && !(GetKeyState(i + 48) == keyState[i]))//如果状态切换更新状态和flag
+				{
+					cout << "tab" << endl;
+					PillarVar::hasFrisbee[i] = !PillarVar::hasFrisbee[i];
+					keyState[i] = !keyState[i];
 				}
 		}
 		Sleep(200);

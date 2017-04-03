@@ -42,6 +42,8 @@ namespace rc17
 		static Coor3D worldCoor;
 		static Coor2D pixelCoor;
 		static int index;
+		static int AshootingIndex;
+		static int BshootingIndex;
 		//摄像头修yaw用
 		static const int pillarLocCol[14];
 		//摄像头修yaw用(ball)
@@ -52,6 +54,8 @@ namespace rc17
 		static const int pillarConfidence[7];
 		//已矫正的Yaw
 		static double correctedYaw[14];
+		//是否有飞盘
+		static bool hasFrisbee[7];
 	};
 
 	class ComVar

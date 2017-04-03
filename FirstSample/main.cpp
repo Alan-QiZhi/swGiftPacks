@@ -7,6 +7,7 @@
 #include <ConsumerImplHelper/ToFCamera.h>
 #include "Execute.h"
 #include "Task.h"
+#include "timeorder.h"
 // 宏定义
 ////
 //摄像头宏定义
@@ -273,6 +274,7 @@ int main(int argc, char* argv[])
 	myExe.init();
 	std::thread t_Correct(rc17::Correct);
 	std::thread t_keycmd(rc17::keyCmd);
+	std::thread t_time(rc17t::timeorder);
     try
     {
         CToFCamera::InitProducer();
@@ -292,6 +294,7 @@ int main(int argc, char* argv[])
 	{
 		t_Correct.join();//等待该线程结束
 		t_keycmd.join();
+		t_time.join();
 		return exitCode;
 	}
 }

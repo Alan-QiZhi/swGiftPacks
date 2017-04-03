@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include "Socket.h"
 #include "HalconCpp.h"
 #include "CoorTransform.h"
 #include "MySerial.h"
@@ -60,6 +61,7 @@ namespace rc17
 	{
 	public:
 		static MySerial serialPort;
+		static Socket socketServer;
 	};
 
 	class ThreadFlag

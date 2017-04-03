@@ -250,6 +250,7 @@
     <ClInclude Include="PillarState.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="RegionDetector.h" />
+    <ClInclude Include="Socket.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="Timeorder.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="PillarState.cpp" />
     <ClCompile Include="Protocol.cpp" />
     <ClCompile Include="RegionDetector.cpp" />
+    <ClCompile Include="Socket.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="Timeorder.cpp" />
   </ItemGroup>

@@ -1,8 +1,5 @@
 #include "GobalVariables.h"
 #include "HalconCpp.h"
-#include "HDevThread.h"
-#include <conio.h>
-#include <iomanip>
 #include <thread>
 #include <ConsumerImplHelper/ToFCamera.h>
 #include "Execute.h"

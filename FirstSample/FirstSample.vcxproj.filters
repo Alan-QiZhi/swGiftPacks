@@ -40,6 +40,9 @@
     <ClCompile Include="Timeorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Socket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GenTL\GenTL_v1_5.h">
@@ -328,6 +331,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Timeorder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

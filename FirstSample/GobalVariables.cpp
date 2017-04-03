@@ -60,7 +60,6 @@ bool rc17::PillarVar::hasFrisbee[7]
 };
 
 rc17::MySerial rc17::ComVar::serialPort;
-Socket rc17::ComVar::server(Socket::Server);
 
 char rc17::ThreadFlag::t_Num = false;
 bool rc17::ThreadFlag::run = true;

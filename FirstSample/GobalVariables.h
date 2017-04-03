@@ -3,7 +3,6 @@
 #include "HalconCpp.h"
 #include "CoorTransform.h"
 #include "MySerial.h"
-#include "Socket.h"
 using namespace std;
 
 #define NEWMETHOD
@@ -61,7 +60,6 @@ namespace rc17
 	{
 	public:
 		static MySerial serialPort;
-		static Socket socketServer;
 	};
 
 	class ThreadFlag

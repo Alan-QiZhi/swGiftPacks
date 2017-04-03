@@ -115,7 +115,7 @@ void rc17::Execute::initSerialPort()
 
 void rc17::Execute::initSocket()
 {
-	ComVar::mySocketClient.init();
+	//ComVar::mySocketClient.init();
 }
 
 void rc17::Execute::setCameraParam()

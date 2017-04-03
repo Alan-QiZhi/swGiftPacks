@@ -6,7 +6,7 @@ namespace rc17
 	{
 	public:
 		static bool init();
-		static void run(HObject _depthImage);
+		static void run(HalconCpp::HObject _depthImage);
 	private:
 		static void initPos();
 		static void initHWindow();

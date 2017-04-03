@@ -3,7 +3,8 @@
 
 #include "Protocol.h"
 #include <conio.h>
-
+#include "PillarState.h"
+using namespace HalconCpp;
 void rc17::Correct()
 {
 	bool readyToShoot = false;

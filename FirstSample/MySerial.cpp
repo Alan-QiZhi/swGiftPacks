@@ -368,10 +368,10 @@ void rc17::MySerial::receive(const int data_len)
 		{
 			for (int i = 0; i < BUFFERSIZE; i++)
 			{
-				if (receiveBuffer[i] == 0xB6 && receiveBuffer[i + 1] == 0xAB && receiveBuffer[i + 11] == 0xBE && receiveBuffer[i + 12] == 0xA9)
+				if (receiveBuffer[i] == 0xB6 && receiveBuffer[i + 1] == 0xAB && receiveBuffer[i + 14] == 0xBE && receiveBuffer[i + 15] == 0xA9)
 				{
-					unsigned char receData[13];
-					for (int j = 0; j < 13; j++)
+					unsigned char receData[16];
+					for (int j = 0; j < 16; j++)
 					{
 						receData[j] = receiveBuffer[(i++) % BUFFERSIZE];
 					}
@@ -385,7 +385,8 @@ void rc17::MySerial::receive(const int data_len)
 						//if (receData[9] > 7) receData[9] = receData[9] - 7;
 						rc17::PillarVar::index = ((int)receData[9] - 1)>= 0? ((int)receData[9] - 1):0;
 						ThreadFlag::t_Num = receData[10];
-
+						for (int i = 0; i < 7; i++)
+							PillarVar::hasFrisbee[i] = (receData[11] >> (6 - i)) & 0x01;
 						//TODO
 						//为了配合学姐测试。
 						//if (receData[9] == 1)

@@ -11,16 +11,16 @@ void rc17::Correct()
 	{
 		if(ThreadFlag::t_Num > 0)
 		{
-			if (PillarState::hasBall() == true)
-			{
-				//cout << "ball" << endl;
-				readyToShoot = PillarState::lockPillar(PillarState::WithBall);
-			}
-			else
-			{
-				readyToShoot = PillarState::lockPillar(PillarState::NoBall);
-			}
-
+			//if (PillarState::hasBall() == true)
+			//{
+			//	//cout << "ball" << endl;
+			//	readyToShoot = PillarState::lockPillar(PillarState::WithBall);
+			//}
+			//else
+			//{
+			//	readyToShoot = PillarState::lockPillar(PillarState::NoBall);
+			//}
+			readyToShoot = true;
 			if (readyToShoot == true && ThreadFlag::t_Num != 2)//发射状态,非云台调整状态
 			{
 				if (PillarState::hasBall() == true)
@@ -37,9 +37,9 @@ void rc17::Correct()
 				Protocol::sendCmd(Protocol::Shoot);
 
 				if (PillarState::hasBall() == true)
-					this_thread::sleep_for(chrono::milliseconds(2400));//打球的延时大一些
+					this_thread::sleep_for(chrono::milliseconds(2000));//打球的延时大一些
 				else
-					this_thread::sleep_for(chrono::milliseconds(1400));//等一发飞盘发射完毕
+					this_thread::sleep_for(chrono::milliseconds(1000));//等一发飞盘发射完毕
 				continue;
 			}
 		}
@@ -157,6 +157,10 @@ void rc17::keyCmd()
 							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column << endl << "   index:" << PillarVar::index
 							<< "   AshootIndex:" << PillarVar::AshootingIndex << "   BshootIndex:" << PillarVar::BshootingIndex << endl;
 						cout << "t_Num: " << (int)ThreadFlag::t_Num << endl;
+						cout << "			" << PillarVar::hasFrisbee[6] << endl;
+						cout << "	" << PillarVar::hasFrisbee[1] << "	" << PillarVar::hasFrisbee[2] 
+							<< "	" << PillarVar::hasFrisbee[3] << "	" << PillarVar::hasFrisbee[4] << "	" << PillarVar::hasFrisbee[5] << endl;
+						cout << "			" << PillarVar::hasFrisbee[0] << endl;
 						cout << endl;
 						continue;
 					}

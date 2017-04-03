@@ -33,14 +33,15 @@ namespace rc17
 			NoBallPara = 0,
 			BallPara,
 			Shoot,
-			CorrectFinish
+			AtoB
 		};
 		static DelayCorrectVariables correctPara[14];
-		static void sendToUnderPan(int cmd, double data1, double data2, double data3, double data4, double data5);
+		static void sendToUnderPan(int cmd, double data1 = 0, double data2 = 0, double data3 = 0, double data4 = 0, double data5 = 0);
 		static void sendToUnderPan(int cmd, double yaw, DelayCorrectVariables correctPara);
 		static void sendToCloudDeck(double data1, double data2, int16_t data3, int16_t data4);
 		static void sendDataForBall();
 		static void sendCmd(int cmd);
+		static void sendPillar(int pillarA, int pillarB);
 		static void sendDataBySocket(long data1 = 0, long data2 = 0, long data3 = 0);
 		static void sendDataBySocket(double data1 = 0, double data2 = 0, double data3 = 0);
 	};

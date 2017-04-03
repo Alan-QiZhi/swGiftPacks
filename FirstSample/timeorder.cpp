@@ -45,8 +45,9 @@ void rc17t::timeorder()
 }
 rc17t::whereiscar rc17t::carAt()
 {
-	return CameraVar::cameraParam.worldX < 7000 ? rc17t::whereiscar::carAtLeft : rc17t::whereiscar::carAtRight;
+	return CameraVar::cameraParam.worldX < 7000 ? carAtLeft : carAtRight;
 }
+
 //搜索要打的台号
 int rc17t::checkPillarOrder(int order[], bool pillarState[7])
 {

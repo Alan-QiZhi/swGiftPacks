@@ -105,6 +105,35 @@ void rc17::Protocol::sendCmd(int cmd)
 		throw exception("串口未打开！");
 }
 
+void rc17::Protocol::sendPillar(int pillarA, int pillarB)
+{
+	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
+		return;
+	unsigned char bytesToSend[16];
+	bytesToSend[0] = 0xb6;
+	bytesToSend[1] = 0xab;
+	bytesToSend[2] = 0;
+	bytesToSend[3] = 0;
+	bytesToSend[4] = 0;
+	bytesToSend[5] = 0;
+	bytesToSend[6] = 0;
+	bytesToSend[7] = 0;
+	bytesToSend[8] = 0;
+	bytesToSend[9] = 0;
+	bytesToSend[10] = 0;
+	bytesToSend[11] = 0;
+	bytesToSend[12] = pillarA << 4 + pillarB;
+	bytesToSend[13] = 0;
+	bytesToSend[14] = 0xbe;
+	bytesToSend[15] = 0xa9;
+
+	if (ComVar::serialPort.isOpened())
+		ComVar::serialPort.send(bytesToSend, 16);
+	else
+		throw exception("串口未打开！");
+}
+}
+
 void rc17::Protocol::sendDataBySocket(long data1, long data2, long data3)
 {
 	unsigned char bytesToSend[12];

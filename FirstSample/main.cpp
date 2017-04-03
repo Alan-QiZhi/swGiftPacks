@@ -8,6 +8,7 @@
 #include "Execute.h"
 #include "Task.h"
 #include "timeorder.h"
+#include "Socket.h"
 // 宏定义
 ////
 //摄像头宏定义
@@ -31,10 +32,6 @@ HObject depthImage, confidenceImage;
 const void *depthData;//深度图像数据
 const void *intensityData;
 const void *confidenceData;
-bool startFromExtern = 0;
-char szWrite[] = "Runing...";
-DWORD dwWrite;
-HANDLE hPipe;
 
 double getFrameRate()
 {
@@ -169,8 +166,6 @@ int CameraAction::run()
 
 bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 {
-	if(startFromExtern)
-		WriteFile(hPipe, szWrite, 10, &dwWrite, NULL);
 	/********************帧率显示**********************/
 	//getFrameRate();
 	//cout << "frameRate:  " << setw(4) << getFrameRate() << endl;
@@ -261,15 +256,6 @@ bool CameraAction::onImageGrabbed( GrabResult grabResult, BufferParts parts )
 
 int main(int argc, char* argv[])
 {
-	if (argv[argc - 1][0] == '-' || argv[argc - 1][1] == 'e')
-		startFromExtern = 1;
-	if (startFromExtern)
-	{
-		LPCWSTR pStrPipeName = TEXT("\\\\.\\pipe\\pipe");
-		hPipe = CreateFile(pStrPipeName, GENERIC_READ | GENERIC_WRITE, 0,
-			NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	}
-	
     int exitCode = EXIT_SUCCESS;
 	myExe.init();
 	std::thread t_Correct(rc17::Correct);

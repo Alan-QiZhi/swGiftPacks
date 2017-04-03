@@ -250,10 +250,10 @@
     <ClInclude Include="PillarState.h" />
     <ClInclude Include="Protocol.h" />
     <ClInclude Include="RegionDetector.h" />
-    <ClInclude Include="SocketClient.h" />
+    <ClInclude Include="Socket.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Task.h" />
-    <ClInclude Include="timeorder.h" />
+    <ClInclude Include="Timeorder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CoorTransform.cpp" />
@@ -267,9 +267,9 @@
     <ClCompile Include="PillarState.cpp" />
     <ClCompile Include="Protocol.cpp" />
     <ClCompile Include="RegionDetector.cpp" />
-    <ClCompile Include="SocketClient.cpp" />
+    <ClCompile Include="Socket.cpp" />
     <ClCompile Include="Task.cpp" />
-    <ClCompile Include="timeorder.cpp" />
+    <ClCompile Include="Timeorder.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

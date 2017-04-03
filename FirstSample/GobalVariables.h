@@ -1,10 +1,9 @@
 #pragma once
 #include <fstream>
-
-#include "SocketClient.h"
 #include "HalconCpp.h"
 #include "CoorTransform.h"
 #include "MySerial.h"
+#include "Socket.h"
 using namespace std;
 
 #define NEWMETHOD
@@ -18,13 +17,13 @@ namespace rc17
 	class HalconVar
 	{
 	public:
-		static HTuple hv_WindowHandle;
+		static HalconCpp::HTuple hv_WindowHandle;
 	};
 
 	class CameraVar
 	{
 	public:
-		static HObject depthImage;
+		static HalconCpp::HObject depthImage;
 		static CameraParam cameraParam;
 		static Coor3D cameraOffset;
 
@@ -62,7 +61,7 @@ namespace rc17
 	{
 	public:
 		static MySerial serialPort;
-		static SocketClient mySocketClient;
+		static Socket socketServer;
 	};
 
 	class ThreadFlag

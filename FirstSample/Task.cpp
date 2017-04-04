@@ -12,15 +12,15 @@ void rc17::Correct()
 	{
 		if(ThreadFlag::t_Num > 0)
 		{
-			if (PillarState::hasBall() == true)
-			{
-				//cout << "ball" << endl;
-				readyToShoot = PillarState::lockPillar(PillarState::WithBall);
-			}
-			else
-			{
-				readyToShoot = PillarState::lockPillar(PillarState::NoBall);
-			}
+			//if (PillarState::hasBall() == true)
+			//{
+			//	//cout << "ball" << endl;
+			//	readyToShoot = PillarState::lockPillar(PillarState::WithBall);
+			//}
+			//else
+			//{
+			//	readyToShoot = PillarState::lockPillar(PillarState::NoBall);
+			//}
 			//if (readyToShoot == true && ThreadFlag::t_Num != 2)//发射状态,非云台调整状态
 			//{
 			//	if (PillarState::hasBall() == true)
@@ -42,12 +42,18 @@ void rc17::Correct()
 			//		this_thread::sleep_for(chrono::milliseconds(1000));//等一发飞盘发射完毕
 			//	continue;
 			//}
-			if (PillarState::hasBall() == true)
-				Protocol::sendPillar(PillarVar::AshootingIndex + 7, PillarVar::BshootingIndex);
-			else 
-				Protocol::sendPillar(PillarVar::AshootingIndex, PillarVar::BshootingIndex);
+				//Protocol::sendPillar(PillarVar::AshootingIndex + 7 + 1, PillarVar::BshootingIndex + 1);
+			Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1);
 			this_thread::sleep_for(chrono::milliseconds(300));
-			Protocol::sendPillar(0xf, 0xf);
+			if (ThreadFlag::t_Num == 1)
+			{
+				if(PillarVar::AshootingIndex == -1)
+					Protocol::sendPillar(0x0, 0xf);
+				else if (PillarVar::BshootingIndex == -1)
+					Protocol::sendPillar(0xf, 0x0);
+				else
+					Protocol::sendPillar(0xf, 0xf);
+			}
 			this_thread::sleep_for(chrono::milliseconds(1000));
 			continue;
 		}

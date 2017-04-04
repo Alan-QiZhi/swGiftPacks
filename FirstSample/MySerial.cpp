@@ -386,7 +386,7 @@ void rc17::MySerial::receive(const int data_len)
 						rc17::PillarVar::index = (static_cast<int>(receData[9]) - 1)>= 0? (static_cast<int>(receData[9]) - 1):0;
 						ThreadFlag::t_Num = receData[10];
 						for (int i = 0; i < 7; i++)
-							PillarVar::hasFrisbee[i] = (receData[11] >> (6 - i)) & 0x01;
+							PillarVar::hasFrisbee[i] = (receData[11] >> i) & 0x01;
 						int a = 0;
 					}
 					break;

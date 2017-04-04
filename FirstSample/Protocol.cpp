@@ -122,7 +122,7 @@ void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 	bytesToSend[9] = 0;
 	bytesToSend[10] = 0;
 	bytesToSend[11] = 0;
-	bytesToSend[12] = pillarA << 4 + pillarB;
+	bytesToSend[12] = pillarA * 16 + pillarB;
 	bytesToSend[13] = 0;
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;

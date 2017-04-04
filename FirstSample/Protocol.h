@@ -40,8 +40,9 @@ namespace rc17
 		static void sendToUnderPan(int cmd, double yaw, DelayCorrectVariables correctPara);
 		static void sendToCloudDeck(double data1, double data2, int16_t data3, int16_t data4);
 		static void sendDataForBall();
-		static void sendCmd(int cmd);
 		static void sendPillar(int pillarA, int pillarB);
+		static void toErzi();
+		static void formErzi(char* recvBuf);
 	};
 }
 

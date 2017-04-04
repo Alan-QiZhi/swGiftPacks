@@ -191,7 +191,7 @@ bool rc17::PillarState::lockPillar(int type)
 		return false;
 	}
 
-	
+
 
 	if (abs(pixelOffset) > thresL && abs(pixelOffset) < thresH)
 	{

@@ -11,36 +11,49 @@ int BShootOrder[2][7]
 
 void rc17t::timeorder()
 {	
+	whereiscar lastCar = whereiscar::carAtRight;
 	while (ThreadFlag::run)
 	{
+		if (ThreadFlag::t_Num > 0)
+		{
 /*切换台柱*/
-		if (PillarVar::hasFrisbee[PillarVar::AshootingIndex] == 1 || //正在打的打上去了 或
-			PillarVar::AshootingIndex == -1)//A  没在打，切换台号
-		{
-			PillarVar::AshootingIndex = checkPillarOrder(AShootOrder[rc17t::carAt()], PillarVar::hasFrisbee);//要打的台号
-			if (PillarVar::AshootingIndex != -1)
-				cout << "A 切换到" << PillarVar::AshootingIndex << endl;
-			;//判断有无球，然后告诉底盘
-			PillarVar::index = PillarVar::AshootingIndex;
-		}
-		if (PillarVar::hasFrisbee[PillarVar::BshootingIndex] == 1 || //正在打的打上去了 或
-			PillarVar::BshootingIndex == -1)//B  没在打，切换台号
-		{
-			PillarVar::BshootingIndex = checkPillarOrder(BShootOrder[rc17t::carAt()], PillarVar::hasFrisbee);//要打的台号
-			if (PillarVar::BshootingIndex != -1)
-				cout << "B 切换到" << PillarVar::BshootingIndex << endl;
-			;//判断有无球，然后告诉底盘
-		}
+			if (PillarVar::hasFrisbee[PillarVar::AshootingIndex] == 1 || //正在打的打上去了 或
+				PillarVar::AshootingIndex == -1)//A  没在打，切换台号
+			{
+
+				PillarVar::AshootingIndex = checkPillarOrder(AShootOrder[rc17t::carAt()], PillarVar::hasFrisbee);//要打的台号
+				if (PillarVar::AshootingIndex != -1)
+					cout << "A 切换到" << PillarVar::AshootingIndex << endl;
+				;//判断有无球，然后告诉底盘
+				PillarVar::index = PillarVar::AshootingIndex;
+			}
+			if (PillarVar::hasFrisbee[PillarVar::BshootingIndex] == 1 || //正在打的打上去了 或
+				PillarVar::BshootingIndex == -1)//B  没在打，切换台号
+			{
+
+				PillarVar::BshootingIndex = checkPillarOrder(BShootOrder[rc17t::carAt()], PillarVar::hasFrisbee);//要打的台号
+				if (PillarVar::BshootingIndex != -1)
+					cout << "B 切换到" << PillarVar::BshootingIndex << endl;
+				;//判断有无球，然后告诉底盘
+			}
+
 /*切换台柱*/
 /*切换底盘位置*/
-		if (PillarVar::AshootingIndex == -1 && PillarVar::BshootingIndex == -1 && //如果没台子打了 且
-			checkPillarOrder(otherLine[rc17t::carAt()], PillarVar::hasFrisbee) != -1)//另一条线上有没打上的
-		{
-			cout << "该换场咯" << endl;
-			Sleep(1000);//至少等底盘发0
-		}
+			if (PillarVar::AshootingIndex == -1 && PillarVar::BshootingIndex == -1 && //如果没台子打了 且
+				checkPillarOrder(otherLine[rc17t::carAt()], PillarVar::hasFrisbee) != -1)//另一条线上有没打上的
+			{
+				cout << "该换场咯" << endl;
+				Sleep(1000);//至少等底盘发0
+			}
 /*切换底盘位置*/
+		}
 		Sleep(30);
+		if (rc17t::carAt() != lastCar)
+		{
+			PillarVar::AshootingIndex = checkPillarOrder(AShootOrder[rc17t::carAt()], PillarVar::hasFrisbee);
+			PillarVar::BshootingIndex = checkPillarOrder(BShootOrder[rc17t::carAt()], PillarVar::hasFrisbee);
+			lastCar = rc17t::carAt();
+		}
 	}
 }
 rc17t::whereiscar rc17t::carAt()

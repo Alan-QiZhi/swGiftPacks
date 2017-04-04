@@ -1,5 +1,5 @@
 #include "GobalVariables.h"
-
+#include "Protocol.h"
 using namespace HalconCpp;
 HTuple rc17::HalconVar::hv_WindowHandle = HTuple();
 
@@ -60,8 +60,8 @@ bool rc17::PillarVar::hasFrisbee[7]
 };
 
 rc17::MySerial rc17::ComVar::serialPort;
-Socket rc17::ComVar::socketServer(Socket::Server);
+Socket rc17::ComVar::socketServer(rc17::Protocol::formErzi, Socket::Server);
 
-char rc17::ThreadFlag::t_Num = 1;
+char rc17::ThreadFlag::t_Num = 0;
 bool rc17::ThreadFlag::run = true;
 bool rc17::ThreadFlag::flags[10] = { 0 };

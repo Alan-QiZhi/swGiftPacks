@@ -57,6 +57,10 @@ void rc17::Execute::run(HObject _depthImage)
 	{
 		PillarVar::worldCoor = CameraVar::getWorldCoor(PillarVar::pixelCoor.row, PillarVar::pixelCoor.column);
 		//cout << "worldCoorZ: " << PillarVar::worldCoor.z << endl;
+		//Coor3D tmp;
+		//tmp.x = PillarVar::worldCoor.y;
+		//tmp.y = PillarVar::worldCoor.z;
+		//CoorTransform::rotateVector(CameraVar::cameraOffset, -CameraVar::cameraParam.pitch).x;
 	}
 
 

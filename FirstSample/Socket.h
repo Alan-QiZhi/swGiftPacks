@@ -11,11 +11,12 @@ public:
 		Server,
 		Client
 	};
-	Socket(int type, char* IP = "127.0.0.1", long port = 6000);
+	Socket(void(*phandle)(char*), int type, char* IP = "127.0.0.1", long port = 6000);
 	void Send(char* data, int len);
 	void Close();
 	~Socket() { Close(); };
 private:
+	void(*_phandle)(char*);
 	SOCKET _socket;
 	SOCKET _clientSocket;
 	int _type = -1;

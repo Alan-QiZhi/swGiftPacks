@@ -257,6 +257,7 @@ int main(int argc, char* argv[])
 	std::thread t_Correct(rc17::Correct);
 	std::thread t_keycmd(rc17::keyCmd);
 	std::thread t_time(rc17t::timeorder);
+	std::thread t_socket(rc17::sendToChild);
     try
     {
         CToFCamera::InitProducer();
@@ -277,6 +278,7 @@ int main(int argc, char* argv[])
 		t_Correct.join();//等待该线程结束
 		t_keycmd.join();
 		t_time.join();
+		t_socket.join();
 		return exitCode;
 	}
 }

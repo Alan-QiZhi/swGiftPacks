@@ -361,11 +361,10 @@ void rc17::MySerial::receive(const int data_len)
 			continue;
 
 		ReadFile(hCom, receiveBuffer, comStat.cbInQue, &numOfBytesRead, &rOverlapped);
-
-		PurgeComm(hCom, PURGE_TXABORT | PURGE_RXABORT | PURGE_TXCLEAR | PURGE_RXCLEAR);
-
 		try
 		{
+			PurgeComm(hCom, PURGE_TXABORT | PURGE_RXABORT | PURGE_TXCLEAR | PURGE_RXCLEAR);
+
 			for (int i = 0; i < BUFFERSIZE; i++)
 			{
 				if (receiveBuffer[i] == 0xB6 && receiveBuffer[i + 1] == 0xAB && receiveBuffer[i + 14] == 0xBE && receiveBuffer[i + 15] == 0xA9)

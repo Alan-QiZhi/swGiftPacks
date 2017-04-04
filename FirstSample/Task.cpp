@@ -8,8 +8,10 @@ using namespace HalconCpp;
 void rc17::Correct()
 {
 	bool readyToShoot = false;
+	bool firstShoot = true;
 	while(ThreadFlag::run)
 	{
+		firstShoot = true;
 		if(ThreadFlag::t_Num > 0)
 		{
 			//if (PillarState::hasBall() == true)
@@ -43,22 +45,29 @@ void rc17::Correct()
 			//	continue;
 			//}
 				//Protocol::sendPillar(PillarVar::AshootingIndex + 7 + 1, PillarVar::BshootingIndex + 1);
+			if (firstShoot)//第一发b装置已经准备好   ？
+			{
+				firstShoot = false;
+				Protocol::sendPillar(0x0, 0xf);
+			}
 			Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1);
 			this_thread::sleep_for(chrono::milliseconds(300));
 			if (ThreadFlag::t_Num == 1)
 			{
-				if(PillarVar::AshootingIndex == -1)
+				if (PillarVar::AshootingIndex == -1 && PillarVar::BshootingIndex == -1);
+				else if(PillarVar::AshootingIndex == -1)
 					Protocol::sendPillar(0x0, 0xf);
 				else if (PillarVar::BshootingIndex == -1)
 					Protocol::sendPillar(0xf, 0x0);
 				else
 					Protocol::sendPillar(0xf, 0xf);
+				
 			}
 			this_thread::sleep_for(chrono::milliseconds(1000));
 			continue;
 		}
 		//650ms 执行一次
-		this_thread::sleep_for(chrono::milliseconds(300));
+		this_thread::sleep_for(chrono::milliseconds(250));
 	}
 }
 
@@ -204,4 +213,14 @@ void rc17::keyCmd()
 		}
 		Sleep(200);
 	}
+}
+
+void rc17::sendToChild()
+{
+	while (ThreadFlag::run)
+	{
+		Protocol::toErzi();
+		Sleep(200);
+	}
+	ComVar::socketServer.~Socket();
 }

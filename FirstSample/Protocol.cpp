@@ -77,34 +77,6 @@ void rc17::Protocol::sendDataForBall()
 		throw exception("串口未打开！");
 }
 
-void rc17::Protocol::sendCmd(int cmd)
-{
-	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
-		return;
-	unsigned char bytesToSend[16];
-	bytesToSend[0] = 0xb6;
-	bytesToSend[1] = 0xab;
-	bytesToSend[2] = 0;
-	bytesToSend[3] = 0;
-	bytesToSend[4] = 0;
-	bytesToSend[5] = 0;
-	bytesToSend[6] = 0;
-	bytesToSend[7] = 0;
-	bytesToSend[8] = 0;
-	bytesToSend[9] = 0;
-	bytesToSend[10] = 0;
-	bytesToSend[11] = 0;
-	bytesToSend[12] = cmd;
-	bytesToSend[13] = 0;
-	bytesToSend[14] = 0xbe;
-	bytesToSend[15] = 0xa9;
-
-	if (ComVar::serialPort.isOpened())
-		ComVar::serialPort.send(bytesToSend, 16);
-	else
-		throw exception("串口未打开！");
-}
-
 void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 {
 	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
@@ -131,6 +103,40 @@ void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 		ComVar::serialPort.send(bytesToSend, 16);
 	else
 		throw exception("串口未打开！");
+}
+
+void rc17::Protocol::toErzi()
+{
+	char bytesToSend[13];
+	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY, tmpang = (CameraVar::receiveAngle-20) * 100;
+	bytesToSend[0] = 0xb6;
+	bytesToSend[1] = 0xab;
+	bytesToSend[2] = tmpx >> 8;
+	bytesToSend[3] = tmpx & 0xff;
+	bytesToSend[4] = tmpy >> 8;
+	bytesToSend[5] = tmpy & 0xff;
+	bytesToSend[6] = tmpang >> 8;
+	bytesToSend[7] = tmpang & 0xff;
+	bytesToSend[8] = bytesToSend[3] + bytesToSend[5] + bytesToSend[7];
+	bytesToSend[9] = PillarVar::BshootingIndex;
+	bytesToSend[10] = ThreadFlag::t_Num;
+	bytesToSend[11] = 0xbe;
+	bytesToSend[12] = 0xa9;
+	ComVar::socketServer.Send(bytesToSend, 13);
+}
+
+void rc17::Protocol::formErzi(char * recvBuf)//转发给底盘
+{
+	cout << "转发" << endl;
+	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)
+		return;
+	if (recvBuf[0] == (char)0xb6 && recvBuf[1] == (char)0xab && recvBuf[14] == (char)0xbe && recvBuf[15] == (char)0xa9)
+	{
+		if (ComVar::serialPort.isOpened())
+			ComVar::serialPort.send((unsigned char*)recvBuf, 16);
+		else
+			throw exception("串口未打开！");
+	}
 }
 
 void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)

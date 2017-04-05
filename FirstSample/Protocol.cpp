@@ -117,7 +117,7 @@ void rc17::Protocol::toClient()
 	bytesToSend[5] = tmpy % 256;
 	bytesToSend[6] = CameraVar::bYaw[0];
 	bytesToSend[7] = CameraVar::bYaw[1];
-+	bytesToSend[8] = bytesToSend[3] + bytesToSend[5] + bytesToSend[7];
+	bytesToSend[8] = bytesToSend[3] + bytesToSend[5] + bytesToSend[7];
 	bytesToSend[9] = PillarVar::BshootingIndex;
 	bytesToSend[10] = ThreadFlag::t_Num;
 	bytesToSend[11] = 0xbe;

@@ -31,6 +31,7 @@ namespace rc17
 		static double receiveX;
 		static double receiveY;
 		static double receiveAngle;
+		static double bYaw;
 		static Coor3D getWorldCoor(double _row, double _column);
 	};
 

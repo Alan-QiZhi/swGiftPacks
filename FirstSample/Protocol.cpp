@@ -105,10 +105,10 @@ void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 		throw exception("串口未打开！");
 }
 
-void rc17::Protocol::toErzi()
+void rc17::Protocol::toClient()
 {
 	char bytesToSend[13];
-	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY, tmpang = (CameraVar::receiveAngle - 40) * 100;
+	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY, tmpang = CameraVar::bYaw;
 	bytesToSend[0] = 0xb6;
 	bytesToSend[1] = 0xab;
 	bytesToSend[2] = tmpx >> 8;
@@ -125,7 +125,7 @@ void rc17::Protocol::toErzi()
 	ComVar::socketServer.Send(bytesToSend, 13);
 }
 
-void rc17::Protocol::formErzi(char * recvBuf)//转发给底盘
+void rc17::Protocol::fromClient(char* recvBuf)//转发给底盘
 {
 	cout << "转发" << endl;
 	if (ThreadFlag::t_Num == false || ThreadFlag::flags[5] == false)

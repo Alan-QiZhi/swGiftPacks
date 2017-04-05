@@ -41,8 +41,8 @@ namespace rc17
 		static void sendToCloudDeck(double data1, double data2, int16_t data3, int16_t data4);
 		static void sendDataForBall();
 		static void sendPillar(int pillarA, int pillarB);
-		static void toErzi();
-		static void formErzi(char* recvBuf);
+		static void toClient();
+		static void fromClient(char* recvBuf);
 	};
 }
 

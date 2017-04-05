@@ -387,7 +387,7 @@ void rc17::MySerial::receive(const int data_len)
 						
 						for (int i = 0; i < 7; i++)
 							PillarVar::hasFrisbee[i] = (receData[11] >> i) & 0x01;
-						CameraVar::bYaw = static_cast<float>(static_cast<int16_t>(receData[12] * 256 + receData[13])) / 10 ;
+						CameraVar::bYaw = receData[12] * 256 + receData[13];
 					}
 					break;
 				}

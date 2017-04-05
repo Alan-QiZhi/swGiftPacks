@@ -31,7 +31,7 @@ namespace rc17
 		static double receiveX;
 		static double receiveY;
 		static double receiveAngle;
-		static double bYaw;
+		static int16_t bYaw;
 		static Coor3D getWorldCoor(double _row, double _column);
 	};
 
@@ -55,6 +55,7 @@ namespace rc17
 		static double correctedYaw[14];
 		// «∑Ò”–∑…≈Ã
 		static bool hasFrisbee[7];
+		static int BHasBall;
 	};
 
 	class ComVar

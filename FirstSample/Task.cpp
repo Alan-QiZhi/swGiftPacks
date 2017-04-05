@@ -50,7 +50,14 @@ void rc17::Correct()
 				firstShoot = false;
 				Protocol::sendPillar(0x0, 0xf);
 			}
-			Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1);
+			if(PillarState::hasBall() && PillarVar::BHasBall== 1)
+				Protocol::sendPillar(PillarVar::AshootingIndex + 1 + 7, PillarVar::BshootingIndex + 1 + 7);
+			else if(PillarState::hasBall())
+				Protocol::sendPillar(PillarVar::AshootingIndex + 1 + 7, PillarVar::BshootingIndex + 1);
+			else if(PillarVar::BHasBall == 1)
+				Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1 + 7);
+			else 
+				Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1);
 			this_thread::sleep_for(chrono::milliseconds(300));
 			if (ThreadFlag::t_Num == 1)
 			{
@@ -219,7 +226,7 @@ void rc17::sendToChild()
 {
 	while (ThreadFlag::run)
 	{
-		Protocol::toErzi();
+		Protocol::toClient();
 		Sleep(200);
 	}
 	ComVar::socketServer.~Socket();

@@ -9,7 +9,7 @@ rc17::Coor3D rc17::CameraVar::cameraOffset = rc17::Coor3D();
 double rc17::CameraVar::receiveX = 0;
 double rc17::CameraVar::receiveY = 0;
 double rc17::CameraVar::receiveAngle = 0;
-double rc17::CameraVar::bYaw = 0;
+int16_t rc17::CameraVar::bYaw = 0;
 
 double const rc17::CameraVar::cameraRotate = 20;
 
@@ -60,6 +60,7 @@ bool rc17::PillarVar::hasFrisbee[7]
 	0, 0, 0, 0, 0, 0, 0
 };
 
+int rc17::PillarVar::BHasBall = false;
 rc17::MySerial rc17::ComVar::serialPort;
 Socket rc17::ComVar::socketServer(rc17::Protocol::fromClient, Socket::Server);
 

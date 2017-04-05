@@ -225,7 +225,7 @@ bool rc17::PillarState::lockPillar(int type)
 bool rc17::PillarState::hasBall()
 {
 	int thresBall = 15; // 超出这个阈值则认为有球。
-	if(PillarVar::pillarLocRow[PillarIndex(PillarVar::index)] - PillarVar::pixelCoor.row > thresBall)
+	if(PillarVar::pillarLocRow[PillarIndex(CameraVar::cameraParam.worldX < 7000 ? PillarVar::index : PillarVar::index + 7)] - PillarVar::pixelCoor.row > thresBall)
 		return true;	
 	return false;
 }

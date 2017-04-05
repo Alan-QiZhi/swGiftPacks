@@ -108,7 +108,7 @@ void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 void rc17::Protocol::toErzi()
 {
 	char bytesToSend[13];
-	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY, tmpang = (CameraVar::receiveAngle-20) * 100;
+	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY, tmpang = (CameraVar::receiveAngle - 40) * 100;
 	bytesToSend[0] = 0xb6;
 	bytesToSend[1] = 0xab;
 	bytesToSend[2] = tmpx >> 8;

@@ -108,16 +108,16 @@ void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 void rc17::Protocol::toClient()
 {
 	char bytesToSend[13];
-	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY, tmpang = CameraVar::bYaw;
+	int16_t tmpx = CameraVar::receiveX, tmpy = CameraVar::receiveY;
 	bytesToSend[0] = 0xb6;
 	bytesToSend[1] = 0xab;
 	bytesToSend[2] = tmpx / 256;
 	bytesToSend[3] = tmpx % 256;
 	bytesToSend[4] = tmpy / 256;
 	bytesToSend[5] = tmpy % 256;
-	bytesToSend[6] = tmpang / 256;
-	bytesToSend[7] = tmpang % 256;
-	bytesToSend[8] = bytesToSend[3] + bytesToSend[5] + bytesToSend[7];
+	bytesToSend[6] = CameraVar::bYaw[0];
+	bytesToSend[7] = CameraVar::bYaw[1];
++	bytesToSend[8] = bytesToSend[3] + bytesToSend[5] + bytesToSend[7];
 	bytesToSend[9] = PillarVar::BshootingIndex;
 	bytesToSend[10] = ThreadFlag::t_Num;
 	bytesToSend[11] = 0xbe;

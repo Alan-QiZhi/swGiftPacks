@@ -45,32 +45,36 @@ void rc17::Correct()
 			//	continue;
 			//}
 				//Protocol::sendPillar(PillarVar::AshootingIndex + 7 + 1, PillarVar::BshootingIndex + 1);
-			if (firstShoot)//第一发b装置已经准备好   ？
-			{
-				firstShoot = false;
-				Protocol::sendPillar(0x0, 0xf);
-			}
-			if(PillarState::hasBall() && PillarVar::BHasBall== 1)
-				Protocol::sendPillar(PillarVar::AshootingIndex + 1 + 7, PillarVar::BshootingIndex + 1 + 7);
-			else if(PillarState::hasBall())
-				Protocol::sendPillar(PillarVar::AshootingIndex + 1 + 7, PillarVar::BshootingIndex + 1);
-			else if(PillarVar::BHasBall == 1)
+			
+				
+			//if (firstShoot)//第一发b装置已经准备好   ？
+			//{
+			//	firstShoot = false;
+			//	Protocol::sendPillar(0x0, 0xf);
+			//}
+			//if(PillarState::hasBall() && PillarVar::BHasBall == 1)
+			//	Protocol::sendPillar(PillarVar::AshootingIndex + 1 + 7, PillarVar::BshootingIndex + 1 + 7);
+			//else if(PillarState::hasBall())
+			//	Protocol::sendPillar(PillarVar::AshootingIndex + 1 + 7, PillarVar::BshootingIndex + 1);
+			//else if(PillarVar::BHasBall == 1)
+			//	Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1 + 7);
+			if(PillarVar::BHasBall == 1 )
 				Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1 + 7);
-			else 
+			if(PillarVar::BHasBall == -1)
 				Protocol::sendPillar(PillarVar::AshootingIndex + 1, PillarVar::BshootingIndex + 1);
 			this_thread::sleep_for(chrono::milliseconds(300));
-			if (ThreadFlag::t_Num == 1)
-			{
-				if (PillarVar::AshootingIndex == -1 && PillarVar::BshootingIndex == -1);
-				else if(PillarVar::AshootingIndex == -1)
-					Protocol::sendPillar(0x0, 0xf);
-				else if (PillarVar::BshootingIndex == -1)
-					Protocol::sendPillar(0xf, 0x0);
-				else
-					Protocol::sendPillar(0xf, 0xf);
-				
-			}
-			this_thread::sleep_for(chrono::milliseconds(1000));
+			//if (ThreadFlag::t_Num == 1)
+			//{
+			//	if (PillarVar::AshootingIndex == -1 && PillarVar::BshootingIndex == -1);
+			//	else if(PillarVar::AshootingIndex == -1)
+			//		Protocol::sendPillar(0x0, 0xf);
+			//	else if (PillarVar::BshootingIndex == -1)
+			//		Protocol::sendPillar(0xf, 0x0);
+			//	else
+			//		Protocol::sendPillar(0xf, 0xf);
+			//	
+			//}
+			this_thread::sleep_for(chrono::milliseconds(700));
 			continue;
 		}
 		//650ms 执行一次

@@ -9,7 +9,7 @@ rc17::Coor3D rc17::CameraVar::cameraOffset = rc17::Coor3D();
 double rc17::CameraVar::receiveX = 0;
 double rc17::CameraVar::receiveY = 0;
 double rc17::CameraVar::receiveAngle = 0;
-int16_t rc17::CameraVar::bYaw = 0;
+unsigned char rc17::CameraVar::bYaw[2] = {0};
 
 double const rc17::CameraVar::cameraRotate = 20;
 

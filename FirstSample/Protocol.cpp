@@ -98,7 +98,10 @@ void rc17::Protocol::sendPillar(int pillarA, int pillarB)
 	bytesToSend[13] = 0;
 	bytesToSend[14] = 0xbe;
 	bytesToSend[15] = 0xa9;
-
+	std::ofstream cmdlog;
+	cmdlog.open("C:\\Users\\robocon2017\\Desktop\\cmdlog.txt", std::ios::app);
+	cmdlog << "time:" << clock() << "   cmdl:" << pillarA << "   cmdr:" << pillarB << endl;
+	cmdlog.close();
 	if (ComVar::serialPort.isOpened())
 		ComVar::serialPort.send(bytesToSend, 16);
 	else
@@ -137,8 +140,14 @@ void rc17::Protocol::fromClient(char* recvBuf)//转发给底盘
 		else
 			throw exception("串口未打开！");
 	}*/
+	if((int)recvBuf[0] != PillarVar::BHasBall)
+		if (PillarVar::BHasBall == 1)
+			cout << "BHasBall" << endl;
+		else if (PillarVar::BHasBall == 0)
+			cout << "BHasn'tBall" << endl;
+		else
+			cout << "isnt in screen" << endl;
 	PillarVar::BHasBall = (int)recvBuf[0];
-	cout << PillarVar::BHasBall << endl;
 }
 
 void rc17::Protocol::DelayCorrectVariables::assign(float* correctPara)

@@ -56,11 +56,11 @@ void rc17::Correct()
 			int pillarB = PillarVar::BshootingIndex + 1;
 			if(PillarState::hasBall() && PillarVar::AshootingIndex > -1)
 				pillarA += 7;
-			if (PillarVar::BHasBall == 1 && PillarVar::BshootingIndex > -1)
+			if (PillarVar::BHasBall != 2 && PillarVar::BHasBall == 1 && PillarVar::BshootingIndex > -1)
 				pillarB += 7;
 			Protocol::sendPillar(pillarA, pillarB);
 
-			this_thread::sleep_for(chrono::milliseconds(300));
+			this_thread::sleep_for(chrono::milliseconds(500));
 			if (ThreadFlag::t_Num == 1)
 			{
 				if (PillarVar::AshootingIndex == -1 && PillarVar::BshootingIndex == -1);
@@ -72,7 +72,7 @@ void rc17::Correct()
 					Protocol::sendPillar(0xf, 0xf);
 			}
 
-			this_thread::sleep_for(chrono::milliseconds(700));
+			this_thread::sleep_for(chrono::milliseconds(1400));
 			continue;
 		}
 		//650ms Ö´ÐÐÒ»´Î
@@ -187,7 +187,8 @@ void rc17::keyCmd()
 							<< "   worldCoor.x:" << PillarVar::worldCoor.x << "   worldCoor.y:" << PillarVar::worldCoor.y
 							<< "   worldCoor.z:" << PillarVar::worldCoor.z << "   pixelCoor.row:" << PillarVar::pixelCoor.row
 							<< "   pixelCoor.column:" << PillarVar::pixelCoor.column << endl << "   index:" << PillarVar::index
-							<< "   AshootIndex:" << PillarVar::AshootingIndex << "   BshootIndex:" << PillarVar::BshootingIndex << endl;
+							<< "   AshootIndex:" << PillarVar::AshootingIndex << "   BshootIndex:" << PillarVar::BshootingIndex 
+							<< "   AHasBall:" << PillarState::hasBall() << "   BHasBall:" << PillarVar::BHasBall << endl;
 						cout << "t_Num: " << (int)ThreadFlag::t_Num << endl;
 						cout << "			" << PillarVar::hasFrisbee[6] << endl;
 						cout << "	" << PillarVar::hasFrisbee[1] << "	" << PillarVar::hasFrisbee[2] 
@@ -203,6 +204,11 @@ void rc17::keyCmd()
 							cout << "serial send:enable" << endl;
 						else
 							cout << "serial send:disable" << endl;
+					if (i == 6)
+					{
+						ThreadFlag::t_Num = 1;
+						Protocol::sendPillar(0, 5);
+					}
 				}
 		}
 
